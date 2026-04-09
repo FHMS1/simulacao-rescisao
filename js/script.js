@@ -1190,7 +1190,8 @@ function salvarPDF() {
   if (logoClone) logoClone.style.mixBlendMode = 'normal';
   hClone.style.display = 'block';
   wrapper.appendChild(hClone);
-  wrapper.appendChild(document.querySelector('.col-results').cloneNode(true));
+  const colResults = document.getElementById('col-results');
+  if (colResults) wrapper.appendChild(colResults.cloneNode(true));
 
   const opcoes = {
     margin:      [6,6,6,6],
