@@ -1185,6 +1185,9 @@ function salvarPDF() {
   const wrapper = document.createElement('div');
   wrapper.style.cssText = 'padding:16px; background:#f7f9fb; font-family:Sora,sans-serif;';
   const hClone = header.cloneNode(true);
+  // Troca logo branca pela azul no PDF (mix-blend-mode não funciona no html2pdf)
+  const logoClone = hClone.querySelector('img');
+  if (logoClone) logoClone.style.mixBlendMode = 'normal';
   hClone.style.display = 'block';
   wrapper.appendChild(hClone);
   wrapper.appendChild(document.querySelector('.col-results').cloneNode(true));
