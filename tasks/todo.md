@@ -11,4 +11,4 @@
 - [x] Implementar resultado, memória de cálculo e impressão/PDF local.
 - [x] Fazer revisão de código, acessibilidade e segurança.
 - [x] Rodar suíte completa e build; fluxo de navegador coberto por RTL, pois nenhum navegador gráfico isolado estava disponível para inspeção visual.
-- [ ] Commitar, enviar ao GitHub e certificar o GitHub Pages ao vivo.
+- [x] Commitar, enviar ao GitHub e certificar o GitHub Pages ao vivo.
