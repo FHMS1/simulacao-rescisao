@@ -1,9 +1,8 @@
 name: Deploy GitHub Pages
 
-# Disparo manual apenas. O Pages ainda não está habilitado no repositório e o
-# destino final da hospedagem não foi decidido — rodar a cada push só geraria
-# falha. Trocar para `push: branches: [main]` quando o Pages for ligado.
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
