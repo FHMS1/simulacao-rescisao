@@ -1,45 +1,49 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2xs);
-  padding: 0.4rem 0.85rem 0.4rem 0.7rem;
+  gap: var(--space-3xs);
+  padding: 0.32rem 0.7rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-pill);
   background: var(--color-surface);
   font-family: var(--font-mono);
   font-size: var(--text-kicker);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   color: var(--color-text-muted);
   white-space: nowrap;
 }
 
-.badge__dot {
-  width: 0.5rem;
-  height: 0.5rem;
+.badge .icone {
+  flex-shrink: 0;
+}
+
+.badge__ponto {
+  width: 0.4rem;
+  height: 0.4rem;
   border-radius: var(--radius-pill);
   background: currentColor;
   flex-shrink: 0;
 }
 
-.badge--neutro .badge__dot {
+.badge--neutro .badge__ponto {
   color: var(--color-text-faint);
 }
 
 .badge--positivo {
-  color: var(--color-positive);
-  border-color: oklch(82% 0.19 138 / 35%);
-  background: oklch(82% 0.19 138 / 8%);
+  color: var(--color-accent);
+  border-color: var(--color-accent-edge);
+  background: var(--color-accent-soft);
 }
 
 .badge--atencao {
   color: var(--color-warn);
-  border-color: oklch(78% 0.15 70 / 35%);
-  background: oklch(78% 0.15 70 / 8%);
+  border-color: var(--color-warn-edge);
+  background: var(--color-warn-soft);
 }
 
 .badge--bloqueante {
   color: var(--color-danger);
-  border-color: oklch(66% 0.19 25 / 40%);
-  background: oklch(66% 0.19 25 / 10%);
+  border-color: var(--color-danger-edge);
+  background: var(--color-danger-soft);
 }

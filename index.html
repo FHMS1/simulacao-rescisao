@@ -13,9 +13,32 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
+    <script>
+      /*
+       * Resolve o tema antes da primeira pintura. Sem isto, o documento pinta
+       * no tema padrão e só troca quando o React monta — o usuário vê o flash.
+       * Espelha `lerTemaSalvo()` em src/ui/tema/useTema.ts; ao mudar a chave ou
+       * o atributo em um dos dois lados, mude no outro.
+       */
+      (function () {
+        try {
+          var salvo = localStorage.getItem('exito:tema');
+          var tema =
+            salvo === 'claro' || salvo === 'escuro'
+              ? salvo
+              : window.matchMedia('(prefers-color-scheme: light)').matches
+                ? 'claro'
+                : 'escuro';
+          document.documentElement.dataset.tema = tema;
+        } catch (erro) {
+          /* Modo privativo pode bloquear localStorage: cai no escuro padrão. */
+          document.documentElement.dataset.tema = 'escuro';
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { RescisaoInput } from '../../domain/rescisao/schema';
 import { useRescisaoForm } from '../forms/useRescisaoForm';
+import { Icone } from './Icone';
 
 interface FormularioRescisaoProps {
   onCalcular: (dados: RescisaoInput) => void;
@@ -28,7 +29,10 @@ export function FormularioRescisao({ onCalcular }: FormularioRescisaoProps) {
       </div>
 
       <fieldset>
-        <legend>1. Contrato e motivo</legend>
+        <legend>
+          <span className="passo" aria-hidden="true">1</span>
+          Contrato e motivo
+        </legend>
         <div className="campos campos--3">
           <label className="campo campo--largo">Nome do empregado <span>Opcional</span><input {...register('dadosGerais.nomeEmpregado')} /></label>
           <label className="campo">Admissão *<input type="date" {...register('dadosGerais.dataAdmissao')} aria-invalid={!!errors.dadosGerais?.dataAdmissao} /></label>
@@ -45,7 +49,10 @@ export function FormularioRescisao({ onCalcular }: FormularioRescisaoProps) {
       </fieldset>
 
       <fieldset>
-        <legend>2. Aviso, saldo, férias e 13º</legend>
+        <legend>
+          <span className="passo" aria-hidden="true">2</span>
+          Aviso, saldo, férias e 13º
+        </legend>
         <div className="campos campos--3">
           <label className="campo">Tipo de aviso<select {...register('avisoPrevio.tipo')}><option value="indenizado">Indenizado</option><option value="trabalhado">Trabalhado</option><option value="parcial">Parcialmente cumprido</option><option value="sem_aviso">Sem aviso</option></select></label>
           {aviso === 'parcial' && <label className="campo">Dias cumpridos *<input type="number" min="0" max="90" {...register('avisoPrevio.diasCumpridos', numero)} /></label>}
@@ -69,7 +76,10 @@ export function FormularioRescisao({ onCalcular }: FormularioRescisaoProps) {
       </fieldset>
 
       <details className="bloco-opcional">
-        <summary>Verbas variáveis e outros descontos</summary>
+        <summary>
+          <span className="passo" aria-hidden="true">3</span>
+          Verbas variáveis e outros descontos
+        </summary>
         <div className="opcoes"><label><input type="checkbox" {...register('verbasVariaveis.integrar')} /> Integrar médias ao salário de referência</label></div>
         {integrarVariaveis && <div className="campos campos--3">
           <label className="campo">Forma de informação<select {...register('verbasVariaveis.modo')}><option value="valor_informado">Média mensal já apurada</option><option value="media_meses">Totais acumulados — calcular média</option></select></label>
@@ -95,8 +105,14 @@ export function FormularioRescisao({ onCalcular }: FormularioRescisaoProps) {
       {isSubmitted && Object.keys(errors).length > 0 && <p className="erro" role="alert">Existem campos inválidos ou incompletos. Revise os blocos acima.</p>}
 
       <div className="formulario__acao">
-        <p>O cálculo acontece somente neste dispositivo.</p>
-        <button type="submit">Calcular rescisão</button>
+        <p>
+          <Icone nome="cadeado" tamanho={12} />
+          O cálculo acontece somente neste dispositivo.
+        </p>
+        <button type="submit">
+          <Icone nome="calculadora" tamanho={15} />
+          Calcular rescisão
+        </button>
       </div>
     </form>
   );

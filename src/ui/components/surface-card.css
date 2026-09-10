@@ -27,5 +27,5 @@
 }
 
 .surface-card--destaque {
-  border-color: oklch(82% 0.19 138 / 30%);
+  border-color: var(--color-accent-edge);
 }

@@ -1,68 +1,167 @@
 /**
- * Design tokens — direção visual "precisão fintech noturna".
- * Ancorada na identidade da Êxito Contábil (fundo escuro, verde de
- * crescimento como acento único) em vez de um dark mode genérico.
+ * Design tokens — direção visual "Direção A": painel de trabalho neutro,
+ * com o verde da Êxito reservado ao que é resultado/confirmação.
+ *
+ * A base cromática é azul-neutra (hue 265) em vez do preto esverdeado
+ * anterior: como a tela é majoritariamente formulário, um fundo neutro
+ * deixa o acento verde significar algo (valor apurado, estado seguro) em
+ * vez de ser só decoração de fundo.
+ *
+ * Tema: `:root` é o escuro. O claro é ativado por `data-tema="claro"` no
+ * <html>, escrito por `useTema` (e pelo script inline de index.html, que
+ * evita o flash de tema errado antes do React montar).
+ *
+ * Contraste: todos os pares texto/fundo destes tokens foram conferidos
+ * contra WCAG 2.1 AA (4.5:1). Os valores de lightness abaixo não são
+ * arbitrários — `--color-text-faint` no tema claro está em 52% porque
+ * 56% (o valor "natural" da escala) reprova em 4.27:1 sobre
+ * `--color-surface`. Ao mexer numa lightness, refaça a conta.
  */
 :root {
-  /* Superfícies — preto levemente esverdeado, nunca neutro puro */
-  --color-bg: oklch(16% 0.015 150);
-  --color-bg-elevated: oklch(19% 0.016 150);
-  --color-surface: oklch(21% 0.017 150);
-  --color-surface-raised: oklch(25% 0.019 150);
-  --color-border: oklch(38% 0.02 150 / 40%);
-  --color-border-strong: oklch(50% 0.03 150 / 55%);
+  /* Superfícies — escala neutra fria, quatro degraus de elevação */
+  --color-bg: oklch(15% 0.008 265);
+  --color-bg-elevated: oklch(18.5% 0.009 265);
+  --color-surface: oklch(21% 0.01 265);
+  --color-surface-raised: oklch(25% 0.011 265);
+  --color-border: oklch(100% 0 0 / 10%);
+  --color-border-strong: oklch(100% 0 0 / 18%);
 
   /* Texto */
-  --color-text: oklch(96% 0.004 150);
-  --color-text-muted: oklch(72% 0.012 150);
-  /* 63% é o piso para o texto pequeno secundário passar em 4.5:1 (WCAG AA)
-     sobre --color-bg-elevated, o fundo mais claro onde ele aparece. */
-  --color-text-faint: oklch(63% 0.014 150);
+  --color-text: oklch(97% 0.003 265);
+  --color-text-muted: oklch(78% 0.012 265);
+  --color-text-faint: oklch(66% 0.014 265);
 
   /* Acento de marca — verde "êxito" */
-  --color-accent: oklch(82% 0.19 138);
-  --color-accent-strong: oklch(72% 0.18 138);
-  --color-accent-ink: oklch(18% 0.03 138); /* texto sobre fundo verde */
+  --color-accent: oklch(80% 0.18 138);
+  --color-accent-strong: oklch(72% 0.17 138);
+  --color-accent-ink: oklch(20% 0.05 138); /* texto sobre fundo verde */
+  --color-accent-soft: oklch(80% 0.18 138 / 16%);
+  --color-accent-edge: oklch(80% 0.18 138 / 30%);
 
   /* Semântico — proventos / atenção / bloqueante (RF-19, Alerta.nivel) */
   --color-positive: var(--color-accent);
-  --color-warn: oklch(78% 0.15 70);
-  --color-danger: oklch(66% 0.19 25);
+  --color-warn: oklch(82% 0.14 75);
+  --color-warn-soft: oklch(82% 0.14 75 / 14%);
+  --color-warn-edge: oklch(82% 0.14 75 / 32%);
+  --color-danger: oklch(70% 0.18 25);
+  --color-danger-soft: oklch(70% 0.18 25 / 14%);
+  --color-danger-edge: oklch(70% 0.18 25 / 34%);
+
+  /* Cabeçalho translúcido e malha de fundo */
+  --color-glass: oklch(15% 0.008 265 / 72%);
+  /* Placa atrás da marca: a arte do logo é branca sobre transparente, então
+     no tema claro ela precisa de fundo escuro próprio para não sumir. */
+  --color-plate: transparent;
 
   /* Tipografia */
-  --font-display: 'Sora', system-ui, sans-serif;
-  --font-mono: 'DM Mono', 'SFMono-Regular', ui-monospace, monospace;
+  --font-display: 'Instrument Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', ui-monospace, monospace;
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
-  --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.0625rem);
-  --text-lg: clamp(1.125rem, 1.05rem + 0.4vw, 1.25rem);
-  --text-xl: clamp(1.375rem, 1.2rem + 0.9vw, 1.75rem);
-  --text-display: clamp(2.5rem, 1.7rem + 3.6vw, 4.5rem);
-  --text-kicker: 0.75rem;
+  --text-base: 0.9375rem;
+  --text-lg: clamp(1.05rem, 1rem + 0.25vw, 1.15rem);
+  --text-xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+  --text-display: clamp(2rem, 1.4rem + 2.2vw, 3rem);
+  --text-total: clamp(1.7rem, 1.3rem + 1.4vw, 2.3rem);
+  --text-kicker: 0.7rem;
 
   /* Espaçamento — ritmo intencional, não padding uniforme */
   --space-3xs: 0.25rem;
   --space-2xs: 0.5rem;
-  --space-xs: 0.875rem;
-  --space-sm: 1.25rem;
-  --space-md: 2rem;
-  --space-lg: clamp(2.5rem, 2rem + 2vw, 4rem);
-  --space-section: clamp(3.5rem, 2.5rem + 5vw, 7.5rem);
+  --space-xs: 0.75rem;
+  --space-sm: 1.1rem;
+  --space-md: 1.6rem;
+  --space-lg: clamp(2rem, 1.4rem + 2.4vw, 3.4rem);
+  --space-section: clamp(3rem, 2rem + 4vw, 6rem);
 
   /* Raio — variado por papel, não uniforme */
   --radius-pill: 999px;
-  --radius-card: 22px;
+  --radius-card: 16px;
+  --radius-tile: 12px;
   --radius-control: 10px;
 
   /* Profundidade */
   --shadow-card:
-    0 24px 70px -28px oklch(0% 0 0 / 65%),
-    inset 0 1px 0 oklch(100% 0 0 / 5%);
-  --shadow-glow: 0 0 120px 0 oklch(82% 0.19 138 / 18%);
+    0 1px 2px oklch(0% 0 0 / 40%),
+    0 16px 40px -22px oklch(0% 0 0 / 70%);
 
   /* Movimento */
   --duration-fast: 150ms;
   --duration-normal: 320ms;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  color-scheme: dark;
+}
+
+[data-tema='claro'] {
+  --color-bg: oklch(98.6% 0.002 265);
+  --color-bg-elevated: oklch(100% 0 0);
+  --color-surface: oklch(97% 0.003 265);
+  --color-surface-raised: oklch(94.5% 0.005 265);
+  --color-border: oklch(25% 0.02 265 / 11%);
+  --color-border-strong: oklch(25% 0.02 265 / 20%);
+
+  --color-text: oklch(25% 0.012 265);
+  --color-text-muted: oklch(46% 0.012 265);
+  --color-text-faint: oklch(52% 0.012 265);
+
+  --color-accent: oklch(50% 0.14 145);
+  --color-accent-strong: oklch(43% 0.13 145);
+  --color-accent-ink: oklch(99% 0.01 145);
+  --color-accent-soft: oklch(50% 0.14 145 / 12%);
+  --color-accent-edge: oklch(50% 0.14 145 / 34%);
+
+  --color-warn: oklch(50% 0.13 62);
+  --color-warn-soft: oklch(50% 0.13 62 / 10%);
+  --color-warn-edge: oklch(50% 0.13 62 / 30%);
+  --color-danger: oklch(50% 0.19 25);
+  --color-danger-soft: oklch(50% 0.19 25 / 9%);
+  --color-danger-edge: oklch(50% 0.19 25 / 30%);
+
+  --color-glass: oklch(100% 0 0 / 78%);
+  --color-plate: oklch(22% 0.01 265);
+
+  --shadow-card:
+    0 1px 2px oklch(25% 0.02 265 / 7%),
+    0 14px 32px -20px oklch(25% 0.02 265 / 22%);
+
+  color-scheme: light;
+}
+
+@media print {
+  /*
+   * O PDF é o entregável levado ao cliente: sai sempre em papel branco, seja
+   * qual for o tema da tela. Fica aqui, e não no CSS da página, porque
+   * `[data-tema='claro']` tem a mesma especificidade de `:root` — quem vence é
+   * a ordem de origem, e só neste arquivo ela é garantida.
+   */
+  :root,
+  [data-tema='claro'] {
+    --color-bg: #fff;
+    --color-bg-elevated: #fff;
+    --color-surface: #fff;
+    --color-surface-raised: #fff;
+    --color-border: #ddd;
+    --color-border-strong: #bbb;
+
+    --color-text: #111;
+    --color-text-muted: #333;
+    --color-text-faint: #555;
+
+    --color-accent: #14682b;
+    --color-accent-soft: transparent;
+    --color-accent-edge: #bbb;
+
+    --color-warn: #7a4600;
+    --color-warn-soft: transparent;
+    --color-danger: #a11d24;
+    --color-danger-soft: transparent;
+
+    --shadow-card: none;
+    --color-glass: #fff;
+    --color-plate: transparent;
+
+    color-scheme: light;
+  }
 }
