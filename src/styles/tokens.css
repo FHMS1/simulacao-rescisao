@@ -1,0 +1,68 @@
+/**
+ * Design tokens — direção visual "precisão fintech noturna".
+ * Ancorada na identidade da Êxito Contábil (fundo escuro, verde de
+ * crescimento como acento único) em vez de um dark mode genérico.
+ */
+:root {
+  /* Superfícies — preto levemente esverdeado, nunca neutro puro */
+  --color-bg: oklch(16% 0.015 150);
+  --color-bg-elevated: oklch(19% 0.016 150);
+  --color-surface: oklch(21% 0.017 150);
+  --color-surface-raised: oklch(25% 0.019 150);
+  --color-border: oklch(38% 0.02 150 / 40%);
+  --color-border-strong: oklch(50% 0.03 150 / 55%);
+
+  /* Texto */
+  --color-text: oklch(96% 0.004 150);
+  --color-text-muted: oklch(72% 0.012 150);
+  /* 63% é o piso para o texto pequeno secundário passar em 4.5:1 (WCAG AA)
+     sobre --color-bg-elevated, o fundo mais claro onde ele aparece. */
+  --color-text-faint: oklch(63% 0.014 150);
+
+  /* Acento de marca — verde "êxito" */
+  --color-accent: oklch(82% 0.19 138);
+  --color-accent-strong: oklch(72% 0.18 138);
+  --color-accent-ink: oklch(18% 0.03 138); /* texto sobre fundo verde */
+
+  /* Semântico — proventos / atenção / bloqueante (RF-19, Alerta.nivel) */
+  --color-positive: var(--color-accent);
+  --color-warn: oklch(78% 0.15 70);
+  --color-danger: oklch(66% 0.19 25);
+
+  /* Tipografia */
+  --font-display: 'Sora', system-ui, sans-serif;
+  --font-mono: 'DM Mono', 'SFMono-Regular', ui-monospace, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.0625rem);
+  --text-lg: clamp(1.125rem, 1.05rem + 0.4vw, 1.25rem);
+  --text-xl: clamp(1.375rem, 1.2rem + 0.9vw, 1.75rem);
+  --text-display: clamp(2.5rem, 1.7rem + 3.6vw, 4.5rem);
+  --text-kicker: 0.75rem;
+
+  /* Espaçamento — ritmo intencional, não padding uniforme */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.875rem;
+  --space-sm: 1.25rem;
+  --space-md: 2rem;
+  --space-lg: clamp(2.5rem, 2rem + 2vw, 4rem);
+  --space-section: clamp(3.5rem, 2.5rem + 5vw, 7.5rem);
+
+  /* Raio — variado por papel, não uniforme */
+  --radius-pill: 999px;
+  --radius-card: 22px;
+  --radius-control: 10px;
+
+  /* Profundidade */
+  --shadow-card:
+    0 24px 70px -28px oklch(0% 0 0 / 65%),
+    inset 0 1px 0 oklch(100% 0 0 / 5%);
+  --shadow-glow: 0 0 120px 0 oklch(82% 0.19 138 / 18%);
+
+  /* Movimento */
+  --duration-fast: 150ms;
+  --duration-normal: 320ms;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}

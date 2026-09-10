@@ -1,0 +1,188 @@
+.pagina {
+  --gutter: clamp(1rem, 0.5rem + 3vw, 4rem);
+  position: relative;
+  /* `clip` e não `hidden`: hidden cria um contêiner de rolagem e quebra o
+     `position: sticky` do cabeçalho. */
+  overflow-x: clip;
+}
+
+/* Atmosfera: halo verde difuso atrás do topo, ancorado na marca */
+.pagina::before {
+  content: '';
+  position: absolute;
+  inset-block-start: -18rem;
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  width: min(70rem, 130vw);
+  aspect-ratio: 1;
+  background: radial-gradient(circle, oklch(82% 0.19 138 / 13%) 0%, transparent 62%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.pagina > * {
+  position: relative;
+  z-index: 1;
+}
+
+.container {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ── Cabeçalho ─────────────────────────────────────────── */
+.cabecalho {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(14px);
+  background: oklch(16% 0.015 150 / 72%);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cabecalho__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding-block: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.marca img {
+  height: 3rem;
+  width: auto;
+}
+
+/* ── Hero ──────────────────────────────────────────────── */
+.hero {
+  padding-block: var(--space-section) var(--space-lg);
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  gap: var(--space-lg);
+  align-items: end;
+}
+
+.kicker {
+  font-family: var(--font-mono);
+  font-size: var(--text-kicker);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: var(--space-sm);
+}
+
+.hero__titulo {
+  font-size: var(--text-display);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.hero__titulo em {
+  display: block;
+  font-style: normal;
+  color: var(--color-text-faint);
+}
+
+.hero__lead {
+  margin-top: var(--space-sm);
+  max-width: 46ch;
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  text-wrap: pretty;
+}
+
+.hero__avisos {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  padding-bottom: var(--space-3xs);
+}
+
+/* ── Etapas da migração ────────────────────────────────── */
+.etapas {
+  padding-block: var(--space-lg) var(--space-section);
+}
+
+.etapas__cabecalho {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+  flex-wrap: wrap;
+}
+
+.etapas__titulo {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.etapas__nota {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-text-faint);
+}
+
+.etapas__grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--space-sm);
+  margin-top: calc(var(--space-md) + var(--space-2xs));
+}
+
+.etapa__indice {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-accent);
+  display: block;
+  margin-bottom: var(--space-2xs);
+}
+
+.etapa__descricao {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-sm);
+}
+
+.etapa__ref {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-faint);
+  letter-spacing: 0.04em;
+}
+
+/* ── Rodapé ────────────────────────────────────────────── */
+.rodape {
+  border-top: 1px solid var(--color-border);
+  padding-block: var(--space-md);
+  background: var(--color-bg-elevated);
+}
+
+.rodape__inner {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  font-size: var(--text-sm);
+  color: var(--color-text-faint);
+}
+
+@media (max-width: 56rem) {
+  .hero {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .hero__avisos {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
