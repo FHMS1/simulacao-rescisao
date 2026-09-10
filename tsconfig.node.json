@@ -11,7 +11,12 @@
     "moduleDetection": "force",
     "noEmit": true,
 
-    "strict": true
+    "strict": true,
+
+    /* Explícito de propósito: sem isso o TS varre os diretórios acima do
+       projeto atrás de @types e pode achar um pacote fora do repositório,
+       fazendo o build passar aqui e quebrar no CI. */
+    "types": ["node"]
   },
   "include": ["vite.config.ts"]
 }
