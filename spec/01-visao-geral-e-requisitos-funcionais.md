@@ -23,10 +23,10 @@ Numeração estável — ao alterar um requisito, não reutilize o número de um
 
 ### Bloco A — Dados gerais
 - **RF-01**: O sistema deve capturar nome do empregado (opcional), datas de admissão e desligamento, salário base, tipo de contrato (indeterminado/determinado), tipo de salário (mensalista/horista/comissionista/misto), número de dependentes para IRRF, e informação de pensão alimentícia (percentual ou valor fixo).
-- **RF-02**: O sistema deve calcular automaticamente o tempo de serviço (anos, meses, dias) a partir das datas de admissão e desligamento, usando diferença de calendário real — **não** aproximação de 30 dias por mês (ver `specs/05`, caso de teste de borda em fevereiro).
+- **RF-02**: O sistema deve calcular automaticamente o tempo de serviço (anos, meses, dias) a partir das datas de admissão e desligamento, usando diferença de calendário real — **não** aproximação de 30 dias por mês (ver `spec/05`, caso de teste de borda em fevereiro).
 
 ### Bloco B — Motivo do desligamento
-- **RF-03**: O sistema deve suportar, no mínimo, os seguintes motivos de rescisão, cada um com seu próprio conjunto de verbas/multas aplicáveis (detalhado em `specs/02`):
+- **RF-03**: O sistema deve suportar, no mínimo, os seguintes motivos de rescisão, cada um com seu próprio conjunto de verbas/multas aplicáveis (detalhado em `spec/02`):
   dispensa sem justa causa; pedido de demissão; dispensa por justa causa; rescisão por acordo (art. 484-A CLT); término de contrato por prazo determinado; rescisão antecipada pelo empregador (prazo determinado); rescisão antecipada pelo empregado (prazo determinado); rescisão indireta; culpa recíproca/força maior.
 
 ### Bloco C — Aviso prévio
@@ -40,21 +40,21 @@ Numeração estável — ao alterar um requisito, não reutilize o número de um
 ### Bloco E — Férias
 - **RF-08**: Calcular férias vencidas (com opção de período em dobro) e férias proporcionais, ambas com o terço constitucional.
 - **RF-09**: Suportar abono pecuniário (a pagar ou já recebido/a descontar).
-- **RF-10**: Calcular avos de férias proporcionais automaticamente a partir das datas, com opção de sobrescrever manualmente.
+- **RF-10**: Calcular avos de férias proporcionais automaticamente a partir das datas, considerando como avo a fração igual ou superior a 15 dias no período aquisitivo, com opção de sobrescrever manualmente. Quando houver projeção do aviso indenizado, a data final projetada deve ser usada na contagem.
 
 ### Bloco F — 13º salário
-- **RF-11**: Calcular 13º proporcional pelos avos do ano corrente, com opção de sobrescrever manualmente, e descontar adiantamento já recebido.
+- **RF-11**: Calcular 13º proporcional pelos avos do ano corrente, considerando como mês integral a fração igual ou superior a 15 dias de trabalho, com opção de sobrescrever manualmente, e descontar adiantamento já recebido. Quando houver projeção do aviso indenizado, a data final projetada deve ser usada na contagem.
 
 ### Bloco G — Verbas variáveis
-- **RF-12**: Permitir integrar médias de horas extras, adicional noturno, comissões, DSR sobre variáveis, insalubridade, periculosidade e outras verbas, informadas diretamente ou calculadas pela média de 3/6/12 meses (cálculo pela média ainda não implementado na versão vanilla — pendente, ver `specs/05`).
+- **RF-12**: Permitir integrar médias de horas extras, adicional noturno, comissões, DSR sobre variáveis, insalubridade, periculosidade e outras verbas, informadas diretamente ou calculadas pela média de 3/6/12 meses (cálculo pela média ainda não implementado na versão vanilla — pendente, ver `spec/05`).
 
 ### Bloco H — Descontos adicionais
 - **RF-13**: Suportar descontos de adiantamento salarial, vale-transporte, vale-alimentação, convênios, empréstimos/consignado e outros descontos com descrição livre.
 
 ### Tributação e FGTS
-- **RF-14**: Calcular INSS e IRRF aplicando corretamente as isenções por natureza indenizatória das verbas — ver tabela de incidência completa em `specs/02-regras-de-negocio-tributarias.md`. Este requisito é o que corrige o bug histórico do projeto (verbas indenizatórias sendo tributadas indevidamente).
+- **RF-14**: Calcular INSS e IRRF aplicando corretamente as isenções por natureza indenizatória das verbas — ver tabela de incidência completa em `spec/02-regras-de-negocio-tributarias.md`. Este requisito é o que corrige o bug histórico do projeto (verbas indenizatórias sendo tributadas indevidamente).
 - **RF-15**: Calcular FGTS do mês rescisório e estimar a multa (40%/20%/0%) conforme o motivo, deixando explícito na interface que a multa real depende do saldo total acumulado em conta, que o sistema não tem acesso (é uma estimativa, não o extrato real).
-- **RF-16**: Selecionar automaticamente a tabela de INSS/IRRF vigente com base na data de referência do cálculo (competência), suportando tabelas de anos anteriores — ver `specs/03`.
+- **RF-16**: Selecionar automaticamente a tabela de INSS/IRRF vigente com base na data de referência do cálculo (competência), suportando tabelas de anos anteriores — ver `spec/03`.
 
 ### Saída e transparência
 - **RF-17**: Exibir resumo com valor bruto, total de descontos, líquido a receber e custo total para a empresa.

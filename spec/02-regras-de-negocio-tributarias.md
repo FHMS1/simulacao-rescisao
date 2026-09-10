@@ -23,12 +23,22 @@ A primeira versão do simulador (vanilla JS) incluía as férias (vencidas, prop
 | Abono pecuniário de férias | Não incide | Não incide | A confirmar caso a caso | IN RFB 1.500/2014, art. 62 (mesma lógica das férias indenizadas) |
 | Verbas variáveis integradas (horas extras, comissões, adicional noturno, insalubridade, periculosidade) usadas para compor a média de saldo/aviso/férias/13º | Segue a natureza da verba principal que estão compondo | Segue a natureza da verba principal que estão compondo | Segue a natureza da verba principal | Regra de integração — a média entra na base de cada verba conforme a incidência daquela verba (ex.: média integrada ao 13º sofre INSS/IRRF; média integrada às férias indenizadas, não) |
 
-**Regra derivada importante**: como férias indenizadas (vencidas + proporcionais + dobro) **não entram em nenhuma base tributável**, a implementação de `calcularINSS`/`calcularIRRF` no `domain/` deve montar a base somando apenas: saldo de salário + aviso prévio trabalhado (se houver) + 13º proporcional + médias variáveis integradas a essas verbas. Nada de férias entra ali. Isso deve ser coberto por teste explícito (ver `specs/05`).
+**Regra derivada importante**: como férias indenizadas (vencidas + proporcionais + dobro) **não entram em nenhuma base tributável**, a implementação de `calcularINSS`/`calcularIRRF` no `domain/` deve montar a base somando apenas: saldo de salário + aviso prévio trabalhado (se houver) + 13º proporcional + médias variáveis integradas a essas verbas. Nada de férias entra ali. Isso deve ser coberto por teste explícito (ver `spec/05`).
 
 ## 3. Aviso prévio proporcional
 
 - Base: 30 dias corridos + 3 dias por ano completo de serviço, limitado a 90 dias — **Lei 12.506/2011**.
 - No acordo do art. 484-A CLT, quando o aviso é indenizado, é pago pela metade (art. 484-A, §1º, I, CLT).
+- O aviso trabalhado não é lançado como provento adicional da rescisão, pois sua remuneração é paga normalmente durante o período trabalhado.
+- No aviso parcialmente cumprido, somente os dias restantes são indenizados pelo empregador ou descontados do empregado, conforme o motivo do desligamento.
+- No pedido de demissão sem cumprimento do aviso, são descontados os dias não cumpridos.
+- No acordo do art. 484-A, a redução pela metade incide somente sobre a parcela indenizada restante; a parcela efetivamente trabalhada mantém sua remuneração normal.
+
+## 3.1. Contagem de avos
+
+- Para o 13º salário, cada mês com pelo menos 15 dias de vínculo conta como um avo, conforme o art. 1º, §2º, da Lei 4.090/1962.
+- Para férias proporcionais, a fração igual ou superior a 15 dias dentro do período aquisitivo conta como um avo.
+- A contagem recebe uma data final de vínculo. Quando houver projeção do aviso prévio indenizado, o orquestrador deve fornecer a data projetada, evitando que a função de avos decida implicitamente se a projeção se aplica.
 
 ## 4. Multa do FGTS por motivo de rescisão
 
@@ -38,11 +48,13 @@ A primeira versão do simulador (vanilla JS) incluía as férias (vencidas, prop
 | Pedido de demissão | 0% | Não tem direito | Não tem direito |
 | Dispensa por justa causa | 0% | Não tem direito | Não tem direito |
 | Acordo (art. 484-A) | 20% | Parcial (80%) | Não tem direito |
-| Término de contrato por prazo determinado | 0% | Não tem direito (regra geral) | Não tem direito |
-| Rescisão antecipada pelo empregador (prazo determinado) | Indenização do art. 479 CLT (não é a multa de 40% padrão) | Integral | A confirmar conforme entendimento aplicável |
+| Término de contrato por prazo determinado | 0% | Integral, observada a sistemática de saque escolhida pelo trabalhador | Não tem direito |
+| Rescisão antecipada pelo empregador (prazo determinado) | 40%, além da indenização do art. 479 CLT | Integral, observada a sistemática de saque escolhida pelo trabalhador | A confirmar conforme os requisitos legais |
 | Rescisão antecipada pelo empregado (prazo determinado) | Indenização do art. 480 CLT ao empregador (situação inversa) | Não tem direito | Não tem direito |
 | Rescisão indireta | 40% | Integral | Tem direito |
-| Culpa recíproca / força maior | 20% | Parcial (50%, conforme art. 18, §2º, Lei 8.036/90, para culpa recíproca) | A confirmar conforme entendimento aplicável |
+| Culpa recíproca / força maior | 20% | Integral, observada a sistemática de saque escolhida pelo trabalhador | A confirmar conforme entendimento aplicável |
+
+**Fontes operacionais para contratos a termo**: a extinção normal permite movimentar a conta vinculada conforme o art. 20, IX, da Lei 8.036/1990. Na rescisão antecipada por iniciativa do empregador, o Manual do FGTS Digital, versão 1.40 de 27/02/2026, classifica o desligamento com multa rescisória de 40%. A existência de cláusula assecuratória do art. 481 da CLT pode alterar o tratamento do aviso prévio e deve ser confirmada no caso concreto.
 
 **Nota de implementação**: a multa do FGTS exibida pelo simulador é uma **estimativa** baseada em depósitos mensais projetados (`salarioRef × 8% × meses trabalhados`), porque o sistema não tem acesso ao extrato real da conta vinculada (que pode ter saques anteriores, rendimentos, diferenças de época de depósito). Isso deve continuar explícito na interface (RF-15/RF-18) — nunca apresentar esse número como definitivo.
 
@@ -69,8 +81,10 @@ Situações que impedem ou restringem a dispensa sem justa causa e que o simulad
 - Súmula 386/STJ
 - Súmula 305/TST
 - Lei 12.506/2011
+- Lei 4.090/1962, art. 1º, §§1º e 2º
 - CLT, arts. 477 (§§6º e 8º), 479, 480, 484-A
 - Lei 8.036/1990 (FGTS), art. 18
+- Manual de Orientação do eSocial para o Empregador Doméstico (critério operacional de 15 dias para férias proporcionais)
 - ADCT, art. 10, II, "b"
 - Lei 8.213/1991, art. 118
 

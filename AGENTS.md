@@ -2,7 +2,7 @@
 
 Este arquivo é a fonte única de verdade para qualquer agente de IA (Claude Code, Copilot, ou outro) que for trabalhar neste repositório. Leia-o inteiro antes de tocar em qualquer arquivo. Se uma instrução aqui conflitar com o que parece "óbvio" ao olhar o código, **esta documentação prevalece** — o código pode estar no meio de uma migração e ainda não refletir o padrão-alvo.
 
-As especificações detalhadas (regras de negócio, arquitetura, modelo de dados, critérios de aceite) estão em `specs/`. Este arquivo dá o contexto geral e o processo de trabalho; as `specs/` dão o detalhe técnico e jurídico.
+As especificações detalhadas (regras de negócio, arquitetura, modelo de dados, critérios de aceite) estão em `spec/`. Este arquivo dá o contexto geral e o processo de trabalho; as `spec/` dão o detalhe técnico e jurídico.
 
 ---
 
@@ -12,7 +12,7 @@ Um simulador de rescisão de contrato de trabalho CLT, usado internamente pelo e
 
 **Não é**: um sistema de folha de pagamento, um substituto do eSocial, nem um gerador de TRCT (Termo de Rescisão) com validade jurídica formal. É uma ferramenta de **estimativa e apoio à decisão**, sempre rotulada como tal na interface.
 
-**Estado atual**: em migração de uma versão vanilla JS/HTML monolítica (`js/script.js`, ~1300 linhas, tudo acoplado ao DOM) para uma stack **Vite + React + TypeScript**, com o motor de cálculo extraído como camada independente. Ver `specs/03-arquitetura-tecnica.md` para os detalhes da arquitetura-alvo.
+**Estado atual**: em migração de uma versão vanilla JS/HTML monolítica (`js/script.js`, ~1300 linhas, tudo acoplado ao DOM) para uma stack **Vite + React + TypeScript**, com o motor de cálculo extraído como camada independente. Ver `spec/03-arquitetura-tecnica.md` para os detalhes da arquitetura-alvo.
 
 ---
 
@@ -29,7 +29,7 @@ Um simulador de rescisão de contrato de trabalho CLT, usado internamente pelo e
 
 ## 3. Princípio arquitetural inegociável: `domain/` não conhece DOM nem React
 
-A versão anterior deste projeto tinha toda a lógica fiscal misturada com leitura de `document.getElementById` dentro da mesma função de ~280 linhas. Isso a tornava impossível de testar isoladamente e escondia erros de regra de negócio dentro de código de renderização — foi assim que um erro real de base de cálculo de INSS/IRRF passou despercebido (ver `specs/02-regras-de-negocio-tributarias.md`, seção "Histórico do bug").
+A versão anterior deste projeto tinha toda a lógica fiscal misturada com leitura de `document.getElementById` dentro da mesma função de ~280 linhas. Isso a tornava impossível de testar isoladamente e escondia erros de regra de negócio dentro de código de renderização — foi assim que um erro real de base de cálculo de INSS/IRRF passou despercebido (ver `spec/02-regras-de-negocio-tributarias.md`, seção "Histórico do bug").
 
 Por isso, esta é a regra mais importante do projeto:
 
@@ -52,13 +52,16 @@ src/
 │       │   └── index.ts         # obterTabelaINSS(data), obterTabelaIRRF(data)
 │       ├── calcularINSS.ts
 │       ├── calcularIRRF.ts
+│       ├── calcularTempoServico.ts
+│       ├── calcularSaldoSalario.ts
+│       ├── calcularAvos.ts
 │       ├── calcularFerias.ts
 │       ├── calcularAvisoPrevio.ts
 │       ├── calcular13.ts
 │       ├── calcularFGTS.ts
 │       ├── regrasPorMotivo.ts   # equivalente ao antigo RESCISAO_REGRAS
 │       ├── calcularRescisao.ts  # orquestrador — único ponto de entrada público do domain
-│       ├── tipos.ts             # DTOs — ver specs/04-modelo-de-dados.md
+│       ├── tipos.ts             # DTOs — ver spec/04-modelo-de-dados.md
 │       └── __tests__/
 ├── ui/
 │   ├── components/               # apresentacionais, sem lógica de negócio
@@ -69,7 +72,7 @@ src/
 │       └── SimuladorRescisao.tsx
 └── App.tsx
 
-specs/                             # especificações — ver seção 7 deste documento
+spec/                              # especificações — ver seção 7 deste documento
 AGENTS.md
 CLAUDE.md
 ```
@@ -84,7 +87,7 @@ Este projeto segue desenvolvimento orientado a especificação. Isso significa: 
 
 Ao receber qualquer demanda (bug, feature, refatoração), siga esta ordem:
 
-1. **Leia a spec relevante em `specs/`** antes de abrir qualquer arquivo de código. Se a demanda envolve regra fiscal, comece por `specs/02-regras-de-negocio-tributarias.md`.
+1. **Leia a spec relevante em `spec/`** antes de abrir qualquer arquivo de código. Se a demanda envolve regra fiscal, comece por `spec/02-regras-de-negocio-tributarias.md`.
 2. **Se a demanda envolve uma regra tributária/trabalhista nova ou uma mudança de regra existente**, ela precisa ter uma fonte legal citada (lei, súmula, IN, decreto) antes de virar código. Não implemente uma regra fiscal "porque parece certo" — se a fonte não estiver clara, pare e pergunte ao Fabio antes de prosseguir. Erros aqui viram responsabilidade profissional do escritório com clientes reais.
 3. **Atualize ou crie a spec primeiro** se a demanda muda comportamento (nova verba, nova exceção, novo tipo de rescisão). A spec desatualizada é pior que a ausência de spec, porque engana o próximo agente/dev que ler.
 4. **Implemente no `domain/` primeiro, com teste.** Nenhuma lógica de cálculo é aceita sem teste unitário cobrindo pelo menos: caso normal, caso zero/vazio, e um caso de borda citado na spec.
@@ -97,12 +100,12 @@ Ao receber qualquer demanda (bug, feature, refatoração), siga esta ordem:
 ## 6. O que NUNCA fazer neste projeto
 
 - **Nunca** inserir dado vindo de input do usuário em `innerHTML`/`dangerouslySetInnerHTML` sem sanitização. (Isso já foi um bug real na versão anterior, no campo "nome do empregado".)
-- **Nunca** hardcodar um valor de tabela fiscal (INSS, IRRF, salário mínimo, teto) direto numa função de cálculo. Todo valor fiscal vem de `domain/rescisao/tabelas/`, resolvido pela data de referência — ver `specs/03-arquitetura-tecnica.md`.
+- **Nunca** hardcodar um valor de tabela fiscal (INSS, IRRF, salário mínimo, teto) direto numa função de cálculo. Todo valor fiscal vem de `domain/rescisao/tabelas/`, resolvido pela data de referência — ver `spec/03-arquitetura-tecnica.md`.
 - **Nunca** sobrescrever uma tabela fiscal antiga ao cadastrar uma nova. Tabelas são adicionadas com vigência, nunca substituídas — isso é o que permite recalcular rescisões de anos anteriores.
-- **Nunca** assumir de cabeça se uma verba entra ou não na base de INSS/IRRF. Consulte a tabela de incidência em `specs/02-regras-de-negocio-tributarias.md` — ela existe exatamente porque essa é a parte do sistema mais fácil de errar silenciosamente.
+- **Nunca** assumir de cabeça se uma verba entra ou não na base de INSS/IRRF. Consulte a tabela de incidência em `spec/02-regras-de-negocio-tributarias.md` — ela existe exatamente porque essa é a parte do sistema mais fácil de errar silenciosamente.
 - **Nunca** adicionar uma dependência externa (biblioteca de cálculo, CDN de terceiro) sem `integrity`/SRI quando servida via `<script src>`, e sem justificar por que não dá pra resolver com o que já está no `package.json`.
 - **Nunca** usar `any` em `domain/` para "resolver rápido" um erro de tipo. Se o tipo está difícil de expressar, o modelo de dados provavelmente precisa ser revisto — não contornado.
-- **Nunca** publicar um número de cálculo de tabela fiscal (INSS/IRRF/FGTS) sem que ele tenha sido validado contra a Portaria/Lei oficial por uma pessoa (Fabio ou quem ele delegar). Scraping automático de Diário Oficial para *aplicar* valores automaticamente é proibido neste projeto — ver `specs/03-arquitetura-tecnica.md`, seção "Atualização de tabelas fiscais", para o processo correto (automação de lembrete, não de aplicação).
+- **Nunca** publicar um número de cálculo de tabela fiscal (INSS/IRRF/FGTS) sem que ele tenha sido validado contra a Portaria/Lei oficial por uma pessoa (Fabio ou quem ele delegar). Scraping automático de Diário Oficial para *aplicar* valores automaticamente é proibido neste projeto — ver `spec/03-arquitetura-tecnica.md`, seção "Atualização de tabelas fiscais", para o processo correto (automação de lembrete, não de aplicação).
 
 ---
 
@@ -110,11 +113,11 @@ Ao receber qualquer demanda (bug, feature, refatoração), siga esta ordem:
 
 | Arquivo | Conteúdo |
 |---|---|
-| `specs/01-visao-geral-e-requisitos-funcionais.md` | Objetivo do produto, público, requisitos funcionais numerados, fora de escopo |
-| `specs/02-regras-de-negocio-tributarias.md` | Tabela de incidência de INSS/IRRF/FGTS por verba, com fonte legal de cada regra |
-| `specs/03-arquitetura-tecnica.md` | Estrutura de camadas, DTOs, decisões técnicas e seus porquês, processo de atualização de tabelas fiscais |
-| `specs/04-modelo-de-dados.md` | Interfaces TypeScript de entrada/saída do motor de cálculo |
-| `specs/05-criterios-de-aceite-e-casos-de-teste.md` | Cenários de teste com valores esperados, por tipo de rescisão |
+| `spec/01-visao-geral-e-requisitos-funcionais.md` | Objetivo do produto, público, requisitos funcionais numerados, fora de escopo |
+| `spec/02-regras-de-negocio-tributarias.md` | Tabela de incidência de INSS/IRRF/FGTS por verba, com fonte legal de cada regra |
+| `spec/03-arquitetura-tecnica.md` | Estrutura de camadas, DTOs, decisões técnicas e seus porquês, processo de atualização de tabelas fiscais |
+| `spec/04-modelo-de-dados.md` | Interfaces TypeScript de entrada/saída do motor de cálculo |
+| `spec/05-criterios-de-aceite-e-casos-de-teste.md` | Cenários de teste com valores esperados, por tipo de rescisão |
 
 ---
 

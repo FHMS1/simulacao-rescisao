@@ -11,7 +11,7 @@ A `ui/` depende de `domain/`. `domain/` nunca depende de `ui/`. Esta é a regra 
 
 ## 2. Por que essa separação (não é só estilo)
 
-Na versão anterior, a função `calcular()` lia inputs do DOM, calculava e renderizava tudo junto, numa função de ~280 linhas. Consequência prática: não dava pra escrever `expect(calcularINSS(4200)).toBe(x)` sem montar um DOM inteiro. Isso também escondeu o bug de base tributária (ver `specs/02`) porque a lógica fiscal nunca foi isolada o suficiente para ser revisada de forma independente da UI.
+Na versão anterior, a função `calcular()` lia inputs do DOM, calculava e renderizava tudo junto, numa função de ~280 linhas. Consequência prática: não dava pra escrever `expect(calcularINSS(4200)).toBe(x)` sem montar um DOM inteiro. Isso também escondeu o bug de base tributária (ver `spec/02`) porque a lógica fiscal nunca foi isolada o suficiente para ser revisada de forma independente da UI.
 
 ## 3. `domain/rescisao/tabelas/` — tabelas fiscais versionadas por vigência
 
@@ -90,11 +90,11 @@ Coberto por teste de regressão em `tabelas/__tests__/vigencia.test.ts`.
 
 - O formulário tem ~50 campos com visibilidade condicional (ex.: campos de pensão só aparecem se "tem pensão" = sim). `useState` por campo geraria excesso de re-renders e lógica de exibição espalhada.
 - React Hook Form usa campos não controlados por padrão + `watch()` para as condicionais, o que é mais performático nesse volume de campos.
-- O schema Zod que valida o formulário deve ser a mesma fonte de tipo (`z.infer<typeof schema>`) usada como `RescisaoInput` no `domain/` — ver `specs/04-modelo-de-dados.md`. Isso evita duas definições divergentes do mesmo formato de dado.
+- O schema Zod que valida o formulário deve ser a mesma fonte de tipo (`z.infer<typeof schema>`) usada como `RescisaoInput` no `domain/` — ver `spec/04-modelo-de-dados.md`. Isso evita duas definições divergentes do mesmo formato de dado.
 
 ## 6. Testes
 
-- **Vitest** para tudo em `domain/` — cada função de cálculo tem `__tests__` cobrindo: caso normal, caso de borda citado em `specs/05`, e (quando aplicável) o caso que corrigiu um bug histórico (para virar teste de regressão).
+- **Vitest** para tudo em `domain/` — cada função de cálculo tem `__tests__` cobrindo: caso normal, caso de borda citado em `spec/05`, e (quando aplicável) o caso que corrigiu um bug histórico (para virar teste de regressão).
 - **Testing Library** apenas para fluxos de integração do formulário (ex.: "marcar férias em dobro exibe o campo de períodos"), não para testar valor de cálculo — isso é responsabilidade do teste de `domain/`.
 - Nenhum PR que altera `domain/` é aceito sem teste correspondente.
 

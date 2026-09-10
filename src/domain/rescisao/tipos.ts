@@ -134,6 +134,7 @@ export interface DescontosDetalhados {
   descontoFaltas: number;
   descontoDSR: number;
   adiantamentoDecimoTerceiro: number;
+  descontoAbonoPecuniario: number;
   pensaoAlimenticia: number;
   outrosDescontos: number;
   totalDescontos: number;
@@ -143,7 +144,7 @@ export interface FGTSRescisorio {
   baseFGTSMes: number;
   depositoFGTSMes: number;
   aliquotaMulta: number; // 0, 0.20 ou 0.40
-  saldoFGTSEstimado: number; // estimativa — ver specs/02, seção 4
+  saldoFGTSEstimado: number; // estimativa — ver spec/02, seção 4
   multaFGTSEstimada: number;
 }
 
