@@ -8,9 +8,9 @@ const ETAPAS = [
     indice: '01',
     titulo: 'Motor de cálculo',
     descricao:
-      'Funções puras de INSS, IRRF, férias, aviso prévio, 13º e FGTS, testáveis sem DOM e com tabelas fiscais versionadas por vigência.',
-    ref: 'src/domain/rescisao/ · spec 02 e 04',
-    status: { tom: 'atencao' as const, texto: 'Em migração' },
+      'Tempo de serviço, avos, saldo salarial, aviso prévio, férias, 13º, FGTS e regras por motivo já estão isolados e testados. INSS, IRRF e o orquestrador são o próximo bloco.',
+    ref: '9 módulos do domínio · 65 testes aprovados',
+    status: { tom: 'positivo' as const, texto: 'Base validada' },
   },
   {
     indice: '02',
@@ -57,6 +57,7 @@ export function SimuladorRescisao() {
           <div className="hero__avisos">
             <Badge tom="atencao">Estimativa, não é TRCT</Badge>
             <Badge tom="positivo">Dados não saem do navegador</Badge>
+            <Badge tom="positivo">Motor parcial · 65 testes</Badge>
           </div>
         </section>
 
@@ -65,14 +66,14 @@ export function SimuladorRescisao() {
             <h2 className="etapas__titulo" id="etapas-titulo">
               Migração para Vite + React + TypeScript
             </h2>
-            <p className="etapas__nota">3 etapas</p>
+            <p className="etapas__nota">1 base validada · 2 etapas pendentes</p>
           </div>
 
           <div className="etapas__grade">
             {ETAPAS.map((etapa) => (
               <SurfaceCard
                 key={etapa.indice}
-                destaque={etapa.status.tom === 'atencao'}
+                destaque={etapa.status.tom !== 'neutro'}
                 rotulo={<Badge tom={etapa.status.tom}>{etapa.status.texto}</Badge>}
               >
                 <span className="etapa__indice">{etapa.indice}</span>
