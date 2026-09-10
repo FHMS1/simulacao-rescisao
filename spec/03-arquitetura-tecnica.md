@@ -55,6 +55,14 @@ export function obterTabelaINSS(dataReferencia: Date): TabelaINSS {
 }
 ```
 
+Tabelas atualmente validadas por Fabio em 10/09/2026:
+
+- INSS 2025 — Portaria Interministerial MPS/MF nº 6, de 10/01/2025.
+- INSS 2026 — Portaria Interministerial MPS/MF nº 13, de 09/01/2026.
+- IRRF janeiro a abril de 2025 — tabela oficial RFB 2025.
+- IRRF maio a dezembro de 2025 — Lei nº 15.191/2025 e tabela oficial RFB 2025.
+- IRRF 2026 — Lei nº 15.270/2025 e tabela oficial RFB 2026, incluindo redução mensal baseada nos rendimentos tributáveis brutos. Essa redução não é aplicada à tributação exclusiva do 13º.
+
 Mesmo padrão para `TABELAS_IRRF`. O campo `fonte` é obrigatório — é o que alimenta a memória de cálculo (RF-18) e permite auditar de onde veio cada número.
 
 **Comparação de vigência é feita por string ISO, nunca por objeto `Date`** (`tabelas/vigencia.ts`). `new Date('2025-12-31')` é interpretado como UTC e, no fuso do Brasil (UTC−3), resulta em 30/12 às 21h — uma rescisão no último dia do ano não encontrava a tabela daquele ano e caía em `TabelaNaoEncontradaError`. Como `YYYY-MM-DD` ordena corretamente na comparação lexicográfica, comparar strings resolve o problema sem depender de fuso:
@@ -86,24 +94,32 @@ Coberto por teste de regressão em `tabelas/__tests__/vigencia.test.ts`.
 3. **Automação do lembrete, não da aplicação** — um workflow agendado (recomendado: n8n, já usado pelo Fabio no projeto Hermes) roda entre dezembro e janeiro de cada ano e envia notificação (WhatsApp/e-mail) lembrando de verificar a publicação da nova Portaria e cadastrar a tabela. **A leitura da Portaria e a validação do número são sempre feitas por uma pessoa habilitada (Fabio ou quem ele delegar)** — nunca por um script que aplica o valor sem revisão.
 4. Cada tabela cadastrada registra a fonte (`fonte`) para auditoria futura.
 
-## 5. Formulário — React Hook Form + Zod
+## 5. Contrato de entrada e formulário — React Hook Form + Zod
 
 - O formulário tem ~50 campos com visibilidade condicional (ex.: campos de pensão só aparecem se "tem pensão" = sim). `useState` por campo geraria excesso de re-renders e lógica de exibição espalhada.
 - React Hook Form usa campos não controlados por padrão + `watch()` para as condicionais, o que é mais performático nesse volume de campos.
-- O schema Zod que valida o formulário deve ser a mesma fonte de tipo (`z.infer<typeof schema>`) usada como `RescisaoInput` no `domain/` — ver `spec/04-modelo-de-dados.md`. Isso evita duas definições divergentes do mesmo formato de dado.
+- O schema fica em `domain/rescisao/schema.ts` e é a fonte tanto da validação quanto do tipo `RescisaoInput` (`z.infer<typeof rescisaoInputSchema>`). Ele é puro e pode depender apenas de Zod, nunca de React, DOM, rede ou estado global.
+- `ui/forms/useRescisaoForm.ts` importa o schema do domínio e o conecta ao `zodResolver`. Não existe uma segunda definição de validação na UI.
 
-## 6. Testes
+## 6. Dinheiro e arredondamento
+
+- Funções internas podem manter a precisão normal de `number` durante uma fórmula, mas toda verba, desconto, imposto e total exposto pelo domínio é arredondado para centavos.
+- O arredondamento monetário ocorre em cada parcela legalmente individualizada (por exemplo, contribuição de cada faixa progressiva do INSS) e novamente no total retornado.
+- A função compartilhada de arredondamento fica em `domain/rescisao/dinheiro.ts`; não espalhar `toFixed` ou fórmulas próprias pelos cálculos.
+- A memória de cálculo deve preservar base, alíquota, parcela dedutível/redução e valor arredondado, permitindo reproduzir o total exibido.
+
+## 7. Testes
 
 - **Vitest** para tudo em `domain/` — cada função de cálculo tem `__tests__` cobrindo: caso normal, caso de borda citado em `spec/05`, e (quando aplicável) o caso que corrigiu um bug histórico (para virar teste de regressão).
 - **Testing Library** apenas para fluxos de integração do formulário (ex.: "marcar férias em dobro exibe o campo de períodos"), não para testar valor de cálculo — isso é responsabilidade do teste de `domain/`.
 - Nenhum PR que altera `domain/` é aceito sem teste correspondente.
 
-## 7. PDF e recursos externos
+## 8. PDF e recursos externos
 
-- `html2pdf.js` continua vindo de CDN (`cdnjs`), mas com atributos `integrity` (SRI) e `crossorigin="anonymous"` no `<script>`, para mitigar risco de supply-chain caso o CDN seja comprometido.
-- Nenhuma chamada de rede é feita com os dados do formulário (nome, salário) — a geração de PDF é 100% local no navegador.
+- A exportação usa a impressão nativa do navegador (`window.print()`), com folha de estilos própria. O usuário pode imprimir ou escolher “Salvar como PDF”, sem biblioteca externa e sem risco de supply-chain por CDN.
+- Nenhuma chamada de rede é feita com os dados do formulário (nome, salário) — a geração é 100% local no navegador.
 
-## 8. Decisões técnicas registradas (e seus porquês)
+## 9. Decisões técnicas registradas (e seus porquês)
 
 | Decisão | Alternativa considerada | Por que esta opção |
 |---|---|---|

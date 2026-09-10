@@ -46,7 +46,7 @@ Numeração estável — ao alterar um requisito, não reutilize o número de um
 - **RF-11**: Calcular 13º proporcional pelos avos do ano corrente, considerando como mês integral a fração igual ou superior a 15 dias de trabalho, com opção de sobrescrever manualmente, e descontar adiantamento já recebido. Quando houver projeção do aviso indenizado, a data final projetada deve ser usada na contagem.
 
 ### Bloco G — Verbas variáveis
-- **RF-12**: Permitir integrar médias de horas extras, adicional noturno, comissões, DSR sobre variáveis, insalubridade, periculosidade e outras verbas, informadas diretamente ou calculadas pela média de 3/6/12 meses (cálculo pela média ainda não implementado na versão vanilla — pendente, ver `spec/05`).
+- **RF-12**: Permitir integrar médias de horas extras, adicional noturno, comissões, DSR sobre variáveis, insalubridade, periculosidade e outras verbas. No modo direto, os campos recebem as médias mensais já apuradas; no modo 3/6/12 meses, recebem os totais acumulados no período e o motor divide a soma pela quantidade selecionada.
 
 ### Bloco H — Descontos adicionais
 - **RF-13**: Suportar descontos de adiantamento salarial, vale-transporte, vale-alimentação, convênios, empréstimos/consignado e outros descontos com descrição livre.

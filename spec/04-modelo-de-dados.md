@@ -1,6 +1,6 @@
 # Spec 04 — Modelo de Dados
 
-Estas interfaces são a referência para implementar `domain/rescisao/tipos.ts`. O schema Zod do formulário (`ui/forms/schema.ts`) deve gerar um tipo compatível com `RescisaoInput` via `z.infer`, para não haver dois formatos de dado divergentes entre formulário e motor de cálculo.
+O contrato de entrada é definido uma única vez em `domain/rescisao/schema.ts`: o schema Zod valida os dados e `z.infer` gera `RescisaoInput`. Os DTOs de saída permanecem em `domain/rescisao/tipos.ts`.
 
 ## 1. Entrada — `RescisaoInput`
 
@@ -112,14 +112,27 @@ export interface TempoServico {
   totalMeses: number;
 }
 
-export interface BaseTributavel {
+export interface TributacaoCompetencia {
+  rendimentosTributaveis: number;
   baseINSS: number;
   descontoINSS: number;
   baseIRRF: number;
+  deducoesLegaisIRRF: number;
+  deducaoSimplificadaIRRF: number;
+  deducaoIRRFAplicada: 'legal' | 'simplificada';
+  impostoIRRFAntesReducao: number;
+  reducaoIRRF: number;
   descontoIRRF: number;
   categoriaIRRF: 'isento' | 'reduzido' | 'cheio';
   tabelaINSSAplicada: { vigenciaInicio: string; fonte: string };
   tabelaIRRFAplicada: { vigenciaInicio: string; fonte: string };
+}
+
+export interface TributacaoDetalhada {
+  mensal: TributacaoCompetencia;
+  decimoTerceiro: TributacaoCompetencia;
+  totalINSS: number;
+  totalIRRF: number;
 }
 
 export interface ProventosDetalhados {
@@ -166,7 +179,7 @@ export interface RescisaoOutput {
   diasAvisoPrevio: number;
   proventos: ProventosDetalhados;
   descontos: DescontosDetalhados;
-  tributacao: BaseTributavel;
+  tributacao: TributacaoDetalhada;
   fgts: FGTSRescisorio;
   liquidoEmpregado: number;
   custoTotalEmpresa: number;

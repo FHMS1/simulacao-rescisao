@@ -1,9 +1,3 @@
-// TODO(migração): portar as tabelas reais de INSS que já estavam em uso na
-// versão vanilla (ver `git show <commit-antes-da-migração>:js/script.js`) e
-// validá-las contra a Portaria oficial citada em cada `fonte`, antes de usar
-// em produção — ver AGENTS.md, seção 6, e spec/03, seção 4. Não preencher
-// valores "de cabeça".
-
 export interface FaixaINSS {
   teto: number;
   aliquota: number;
@@ -17,4 +11,29 @@ export interface TabelaINSS {
   teto: number;
 }
 
-export const TABELAS_INSS: TabelaINSS[] = [];
+export const TABELAS_INSS: TabelaINSS[] = [
+  {
+    vigenciaInicio: '2025-01-01',
+    vigenciaFim: '2025-12-31',
+    fonte: 'Portaria Interministerial MPS/MF nº 6, de 10/01/2025',
+    teto: 8_157.41,
+    faixas: [
+      { teto: 1_518, aliquota: 0.075 },
+      { teto: 2_793.88, aliquota: 0.09 },
+      { teto: 4_190.83, aliquota: 0.12 },
+      { teto: 8_157.41, aliquota: 0.14 },
+    ],
+  },
+  {
+    vigenciaInicio: '2026-01-01',
+    vigenciaFim: '2026-12-31',
+    fonte: 'Portaria Interministerial MPS/MF nº 13, de 09/01/2026',
+    teto: 8_475.55,
+    faixas: [
+      { teto: 1_621, aliquota: 0.075 },
+      { teto: 2_902.84, aliquota: 0.09 },
+      { teto: 4_354.27, aliquota: 0.12 },
+      { teto: 8_475.55, aliquota: 0.14 },
+    ],
+  },
+];

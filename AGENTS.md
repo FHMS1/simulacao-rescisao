@@ -22,7 +22,7 @@ Um simulador de rescisão de contrato de trabalho CLT, usado internamente pelo e
 - **UI**: React 18+, TypeScript estrito (`strict: true`, sem `any` não justificado)
 - **Formulário**: React Hook Form + Zod (o schema Zod é a mesma fonte de validação do formulário e de tipagem do DTO de entrada do motor de cálculo — não duplicar validação)
 - **Testes**: Vitest (unitário, principalmente sobre `domain/`) + Testing Library (integração de formulário)
-- **PDF/impressão**: mantém `html2pdf.js`, mas com atributo `integrity` (SRI) no `<script>` — ver seção 6
+- **PDF/impressão**: usa a impressão nativa do navegador, com CSS de impressão e opção “Salvar como PDF”, sem transmitir os dados
 - **Sem backend nesta fase**: tudo roda client-side. Se um backend for introduzido no futuro (ex.: para versionar tabelas fiscais via API), isso será uma decisão registrada em nova spec, não uma suposição implícita.
 
 ---
@@ -61,12 +61,12 @@ src/
 │       ├── calcularFGTS.ts
 │       ├── regrasPorMotivo.ts   # equivalente ao antigo RESCISAO_REGRAS
 │       ├── calcularRescisao.ts  # orquestrador — único ponto de entrada público do domain
-│       ├── tipos.ts             # DTOs — ver spec/04-modelo-de-dados.md
+│       ├── schema.ts            # schema Zod + tipo de entrada compartilhado com a UI
+│       ├── tipos.ts             # DTOs de saída — ver spec/04-modelo-de-dados.md
 │       └── __tests__/
 ├── ui/
 │   ├── components/               # apresentacionais, sem lógica de negócio
 │   ├── forms/
-│   │   ├── schema.ts             # schema Zod do formulário
 │   │   └── useRescisaoForm.ts
 │   └── pages/
 │       └── SimuladorRescisao.tsx
@@ -78,6 +78,8 @@ CLAUDE.md
 ```
 
 Qualquer arquivo novo com lógica de cálculo entra em `domain/`. Qualquer arquivo novo com JSX entra em `ui/`. Não existe meio-termo — se você não sabe em qual pasta um código deveria entrar, é sinal de que ele está misturando responsabilidades e deveria ser dividido em dois arquivos antes de ser escrito.
+
+O schema Zod de entrada fica em `domain/rescisao/schema.ts`: validação do contrato é parte da fronteira pública do domínio e continua sendo código puro. A dependência permitida ali é apenas `zod`; continuam proibidos React, DOM, rede e estado global. A UI importa esse schema, nunca mantém uma cópia.
 
 ---
 
