@@ -109,7 +109,7 @@ export function FormularioRescisao({ onCalcular }: FormularioRescisaoProps) {
           <Icone nome="cadeado" tamanho={12} />
           O cálculo acontece somente neste dispositivo.
         </p>
-        <button type="submit">
+        <button type="submit" className="botao-primario">
           <Icone nome="calculadora" tamanho={15} />
           Calcular rescisão
         </button>
