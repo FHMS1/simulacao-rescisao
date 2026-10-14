@@ -3,6 +3,7 @@ import type { RescisaoInput } from '../../domain/rescisao/schema';
 import { MOTIVOS } from '../forms/motivos';
 import { useRescisaoForm } from '../forms/useRescisaoForm';
 import { Icone } from './Icone';
+import { Moeda } from './Moeda';
 import './botao.css';
 import './cartao.css';
 import './formulario-rescisao.css';
@@ -12,6 +13,8 @@ interface FormularioRescisaoProps {
 }
 
 const numero = { setValueAs: (valor: string) => (valor === '' ? undefined : Number(valor)) } as const;
+// O schema exige este valor, mas quem preenche pode deixá-lo em branco: vazio vale zero.
+const zeroSeVazio = { setValueAs: (valor: string) => (valor === '' ? 0 : Number(valor)) } as const;
 
 /** Mensagem de validação ligada ao campo por `aria-describedby`. */
 function ErroCampo({ id, mensagem }: { id: string; mensagem?: string }) {
@@ -106,7 +109,7 @@ export function FormularioRescisao({ onCalcular }: FormularioRescisaoProps) {
             <ErroCampo id="erro-desligamento" mensagem={erroDesligamento} />
           </div>
           <div>
-            <label className="campo">Salário base *<input type="number" min="0" step="0.01" inputMode="decimal" {...register('dadosGerais.salarioBase', numero)} {...ligacaoErro('erro-salario', erroSalario)} /></label>
+            <label className="campo">Salário base *<Moeda {...register('dadosGerais.salarioBase', numero)} {...ligacaoErro('erro-salario', erroSalario)} /></label>
             <ErroCampo id="erro-salario" mensagem={erroSalario} />
           </div>
           <label className="campo">Motivo *<select {...register('motivo')}>{MOTIVOS.map(([valor, rotulo]) => <option key={valor} value={valor}>{rotulo}</option>)}</select></label>
@@ -122,7 +125,7 @@ export function FormularioRescisao({ onCalcular }: FormularioRescisaoProps) {
           {motivo === 'pdv' && (
             <>
               <div className="campo--condicional">
-                <label className="campo">Incentivo do PDV *<input type="number" min="0" step="0.01" inputMode="decimal" {...register('pdv.valorIncentivo', numero)} {...ligacaoErro('erro-incentivo', erroIncentivo)} /></label>
+                <label className="campo">Incentivo do PDV *<Moeda {...register('pdv.valorIncentivo', numero)} {...ligacaoErro('erro-incentivo', erroIncentivo)} /></label>
                 <ErroCampo id="erro-incentivo" mensagem={erroIncentivo} />
               </div>
               <label className="campo campo--condicional">Multa do FGTS no plano<select {...register('pdv.multaFGTS', { setValueAs: Number })}><option value="0">Sem multa</option><option value="0.2">20%</option><option value="0.4">40%</option></select></label>
@@ -164,16 +167,16 @@ export function FormularioRescisao({ onCalcular }: FormularioRescisaoProps) {
           <label className="campo">Dias de aviso <span>Opcional</span><input type="number" min="0" max="90" inputMode="numeric" placeholder="Automático" {...register('avisoPrevio.diasManual', numero)} /></label>
           <label className="campo">Dias trabalhados no mês<input type="number" min="0" max="31" inputMode="numeric" {...register('saldoSalario.diasTrabalhados', numero)} /></label>
           <label className="campo">Faltas injustificadas<input type="number" min="0" max="31" inputMode="numeric" {...register('saldoSalario.faltasInjustificadas', numero)} /></label>
-          <label className="campo">Outros descontos do mês<input type="number" min="0" step="0.01" inputMode="decimal" {...register('saldoSalario.outrosDescontosMes', numero)} /></label>
+          <label className="campo">Outros descontos do mês<Moeda {...register('saldoSalario.outrosDescontosMes', zeroSeVazio)} /></label>
           <label className="campo">Períodos de férias vencidos<input type="number" min="0" step="1" inputMode="numeric" {...register('ferias.periodosVencidos', numero)} /></label>
           <label className="campo">Períodos em dobro<input type="number" min="0" step="1" inputMode="numeric" {...register('ferias.periodosEmDobro', numero)} /></label>
           {feriasProporcionais && <label className="campo campo--condicional">Avos de férias <span>Opcional</span><input type="number" min="0" max="12" inputMode="numeric" placeholder="Automático" {...register('ferias.avosProporcionalManual', numero)} /></label>}
           <label className="campo">Avos do 13º <span>Opcional</span><input type="number" min="0" max="12" inputMode="numeric" placeholder="Automático" {...register('decimoTerceiro.avosManual', numero)} /></label>
-          <label className="campo">Adiantamento do 13º<input type="number" min="0" step="0.01" inputMode="decimal" {...register('decimoTerceiro.adiantamentoRecebido', numero)} /></label>
+          <label className="campo">Adiantamento do 13º<Moeda {...register('decimoTerceiro.adiantamentoRecebido', numero)} /></label>
           {temAbono && (
             <>
               <label className="campo campo--condicional">Tratamento do abono<select {...register('ferias.abono.tipo')}><option value="a_pagar">A pagar</option><option value="desconto_ja_recebido">Já recebido — descontar</option></select></label>
-              <label className="campo campo--condicional">Valor do abono<input type="number" min="0" step="0.01" inputMode="decimal" {...register('ferias.abono.valor', numero)} /></label>
+              <label className="campo campo--condicional">Valor do abono<Moeda {...register('ferias.abono.valor', numero)} /></label>
             </>
           )}
         </div>
@@ -206,13 +209,13 @@ export function FormularioRescisao({ onCalcular }: FormularioRescisaoProps) {
             <div className="campos campo--condicional">
               <label className="campo">Forma de informação<select {...register('verbasVariaveis.modo')}><option value="valor_informado">Média mensal já apurada</option><option value="media_meses">Totais acumulados — calcular média</option></select></label>
               {modoVariaveis === 'media_meses' && <label className="campo campo--condicional">Quantidade de meses<select {...register('verbasVariaveis.qtdMesesMedia', numero)}><option value="3">3 meses</option><option value="6">6 meses</option><option value="12">12 meses</option></select></label>}
-              <label className="campo">Horas extras<input type="number" min="0" step="0.01" inputMode="decimal" {...register('verbasVariaveis.horasExtras', numero)} /></label>
-              <label className="campo">Comissões<input type="number" min="0" step="0.01" inputMode="decimal" {...register('verbasVariaveis.comissoes', numero)} /></label>
-              <label className="campo">Adicional noturno<input type="number" min="0" step="0.01" inputMode="decimal" {...register('verbasVariaveis.adicionalNoturno', numero)} /></label>
-              <label className="campo">DSR sobre variáveis<input type="number" min="0" step="0.01" inputMode="decimal" {...register('verbasVariaveis.dsrSobreVariaveis', numero)} /></label>
-              <label className="campo">Insalubridade<input type="number" min="0" step="0.01" inputMode="decimal" {...register('verbasVariaveis.insalubridade', numero)} /></label>
-              <label className="campo">Periculosidade<input type="number" min="0" step="0.01" inputMode="decimal" {...register('verbasVariaveis.periculosidade', numero)} /></label>
-              <label className="campo">Outras médias<input type="number" min="0" step="0.01" inputMode="decimal" {...register('verbasVariaveis.outras', numero)} /></label>
+              <label className="campo">Horas extras<Moeda {...register('verbasVariaveis.horasExtras', numero)} /></label>
+              <label className="campo">Comissões<Moeda {...register('verbasVariaveis.comissoes', numero)} /></label>
+              <label className="campo">Adicional noturno<Moeda {...register('verbasVariaveis.adicionalNoturno', numero)} /></label>
+              <label className="campo">DSR sobre variáveis<Moeda {...register('verbasVariaveis.dsrSobreVariaveis', numero)} /></label>
+              <label className="campo">Insalubridade<Moeda {...register('verbasVariaveis.insalubridade', numero)} /></label>
+              <label className="campo">Periculosidade<Moeda {...register('verbasVariaveis.periculosidade', numero)} /></label>
+              <label className="campo">Outras médias<Moeda {...register('verbasVariaveis.outras', numero)} /></label>
               {dsrAuto && (
                 <>
                   <div className="campo--condicional">
@@ -230,12 +233,12 @@ export function FormularioRescisao({ onCalcular }: FormularioRescisaoProps) {
           )}
           <p className="bloco-opcional__subtitulo">Descontos adicionais</p>
           <div className="campos">
-            <label className="campo">Adiantamento salarial<input type="number" min="0" step="0.01" inputMode="decimal" {...register('descontosAdicionais.adiantamentoSalarial', numero)} /></label>
-            <label className="campo">Vale-transporte<input type="number" min="0" step="0.01" inputMode="decimal" {...register('descontosAdicionais.valeTransporte', numero)} /></label>
-            <label className="campo">Vale-alimentação<input type="number" min="0" step="0.01" inputMode="decimal" {...register('descontosAdicionais.valeAlimentacao', numero)} /></label>
-            <label className="campo">Convênios<input type="number" min="0" step="0.01" inputMode="decimal" {...register('descontosAdicionais.convenios', numero)} /></label>
-            <label className="campo">Consignado<input type="number" min="0" step="0.01" inputMode="decimal" {...register('descontosAdicionais.emprestimosConsignado', numero)} /></label>
-            <label className="campo">Outros<input type="number" min="0" step="0.01" inputMode="decimal" {...register('descontosAdicionais.outros', numero)} /></label>
+            <label className="campo">Adiantamento salarial<Moeda {...register('descontosAdicionais.adiantamentoSalarial', numero)} /></label>
+            <label className="campo">Vale-transporte<Moeda {...register('descontosAdicionais.valeTransporte', numero)} /></label>
+            <label className="campo">Vale-alimentação<Moeda {...register('descontosAdicionais.valeAlimentacao', numero)} /></label>
+            <label className="campo">Convênios<Moeda {...register('descontosAdicionais.convenios', numero)} /></label>
+            <label className="campo">Consignado<Moeda {...register('descontosAdicionais.emprestimosConsignado', numero)} /></label>
+            <label className="campo">Outros<Moeda {...register('descontosAdicionais.outros', numero)} /></label>
           </div>
         </div>
       </details>

@@ -30,13 +30,26 @@ interface LinhaProps {
 }
 
 function Linha({ nome, valor, total = false }: LinhaProps) {
-  const classe = ['linha-memoria', total && 'linha-memoria--total', !total && valor === 0 && 'linha-memoria--zero']
+  const zerada = !total && valor === 0;
+  const classe = ['linha-memoria', total && 'linha-memoria--total', zerada && 'linha-memoria--zero']
     .filter(Boolean)
     .join(' ');
   return (
     <div className={classe}>
       <dt>{nome}</dt>
-      <dd className="numeric">{moeda.format(valor)}</dd>
+      {/* Parcela zerada vira um traço: a linha segue na lista (a memória é
+          completa), mas o olho não tropeça em fileiras de "R$ 0,00". O leitor
+          de tela continua ouvindo o valor por extenso. */}
+      <dd className="numeric">
+        {zerada ? (
+          <>
+            <span aria-hidden="true">—</span>
+            <span className="sr-only">{moeda.format(0)}</span>
+          </>
+        ) : (
+          moeda.format(valor)
+        )}
+      </dd>
     </div>
   );
 }

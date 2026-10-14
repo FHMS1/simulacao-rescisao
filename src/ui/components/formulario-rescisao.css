@@ -95,6 +95,37 @@
   margin-top: var(--space-3xs);
 }
 
+/* Prefixo "R$" dentro do campo de valor. É pseudo-elemento: não entra no
+   valor digitado e não polui a leitura do campo por leitor de tela. */
+.moeda {
+  position: relative;
+  display: block;
+}
+
+.moeda::before {
+  content: 'R$';
+  position: absolute;
+  top: 50%;
+  left: 0.8rem;
+  transform: translateY(-50%);
+  color: var(--color-text-faint);
+  font: 500 var(--text-xs) var(--font-mono);
+  pointer-events: none;
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.moeda:focus-within::before {
+  color: var(--color-accent);
+}
+
+.moeda > input {
+  padding-left: 2.45rem;
+}
+
+.campo > .moeda {
+  margin-top: var(--space-3xs);
+}
+
 .campo--largo {
   grid-column: 1 / -1;
 }
