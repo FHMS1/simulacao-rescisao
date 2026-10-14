@@ -66,7 +66,7 @@ Numeração estável — ao alterar um requisito, não reutilize o número de um
 - **RF-17**: Exibir resumo com valor bruto, total de descontos, líquido a receber e custo total para a empresa.
 - **RF-18**: Exibir memória de cálculo detalhada, indicando explicitamente qual tabela fiscal (com vigência) foi usada, e reforçar visualmente que o resultado é uma estimativa, não documento com validade jurídica formal.
 - **RF-19**: Exibir alertas relevantes (ex.: tabela fiscal desatualizada, situação de possível estabilidade provisória, atraso no pagamento sujeito a multa do art. 477 §8º CLT).
-- **RF-20**: Exportar resultado em PDF e permitir impressão direta.
+- **RF-20**: Exportar resultado em PDF e permitir impressão direta. O documento sai em A4, sem o cabeçalho e o rodapé automáticos do navegador, e traz: identificação do caso (empregado, motivo, datas, salário base, tempo de contrato e aviso), data e hora de geração, totais, as três memórias (cálculo, tributos e FGTS), os alertas com fonte legal e um rodapé indicando que os valores são estimados. Não depende de cor de fundo (a ênfase vem de borda, tamanho e peso) e não leva nenhuma marca de empresa.
 
 ### Requisitos funcionais planejados (ainda não implementados — ver backlog)
 - **RF-21 (planejado)**: Estimar valor e número de parcelas do seguro-desemprego, quando aplicável ao motivo da rescisão.
@@ -80,6 +80,10 @@ Numeração estável — ao alterar um requisito, não reutilize o número de um
 - **RNF-03 (auditabilidade)**: Todo resultado deve ser rastreável até a tabela fiscal e a regra que o gerou (ver RF-18).
 - **RNF-04 (manutenção anual)**: Adicionar uma nova tabela fiscal anual não pode exigir alterar código de cálculo, apenas adicionar dado em `domain/rescisao/tabelas/`.
 - **RNF-05 (acessibilidade)**: Formulário deve ser operável por teclado e ter labels associados a todos os campos (a versão vanilla já usa `aria-label` em alguns pontos — manter e estender na migração).
+
+- **RNF-06 (privacidade tipográfica)**: A interface usa somente fontes do sistema (sem Google Fonts nem outro serviço de fontes). Uma requisição de fonte expõe o IP do usuário e contradiz o RNF-02.
+- **RNF-07 (qualidade de interface)**: Referência WCAG 2.2 AA — alvos de toque de pelo menos 44 px nos controles principais, foco visível, mensagens de erro ligadas ao campo (`aria-describedby`), sem rolagem horizontal de 320 px a desktop, e `prefers-reduced-motion` respeitado. Animações se limitam a CSS (opacidade e deslocamento curtos). A impressão sai sempre em papel branco, sem transições, sem elementos interativos e com as três memórias (RF-20).
+- **RNF-08 (apresentação do resultado)**: O líquido estimado tem destaque e vem antes de proventos e descontos. A memória de cálculo lista também as parcelas condicionais (abono, pensão, indenizações, incentivo do PDV) quando existem, para que os totais fechem com as linhas à vista; parcelas zeradas permanecem visíveis, em tom atenuado. Alertas aparecem por gravidade (revisão necessária, atenção, nota) com a fonte legal, quando houver.
 
 ## 5. Fora de escopo (explícito)
 

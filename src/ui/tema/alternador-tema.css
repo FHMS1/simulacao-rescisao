@@ -1,8 +1,8 @@
 .alternador-tema {
   display: grid;
   place-items: center;
-  width: 2.1rem;
-  height: 2.1rem;
+  width: var(--tap-min);
+  height: var(--tap-min);
   padding: 0;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-control);

@@ -1,0 +1,25 @@
+/* Base visual compartilhada pelos cartões da tela de trabalho.
+
+   `overflow: clip` (e não `hidden`) recorta as bordas arredondadas sem criar
+   um contêiner de rolagem — com `hidden`, a barra de ação do formulário
+   deixaria de grudar no rodapé da janela. */
+.formulario,
+.resultado,
+.resultado-vazio {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  overflow: clip;
+  transition:
+    background-color var(--duration-normal) var(--ease-out-expo),
+    border-color var(--duration-normal) var(--ease-out-expo);
+}
+
+.formulario h2,
+.resultado h2,
+.resultado-vazio h2 {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}

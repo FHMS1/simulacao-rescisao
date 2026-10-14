@@ -27,7 +27,9 @@ export type NomeIcone =
   | 'predio'
   | 'seta-cima'
   | 'seta-baixo'
-  | 'recomecar';
+  | 'recomecar'
+  | 'seta-direita'
+  | 'check';
 
 const DESENHOS: Record<NomeIcone, ReactNode> = {
   sol: (
@@ -110,6 +112,8 @@ const DESENHOS: Record<NomeIcone, ReactNode> = {
       <path d="M17 8v9H8" />
     </>
   ),
+  'seta-direita': <path d="m9 6 6 6-6 6" />,
+  check: <path d="m5 12.5 4.5 4.5L19 7.5" />,
   recomecar: (
     <>
       <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />

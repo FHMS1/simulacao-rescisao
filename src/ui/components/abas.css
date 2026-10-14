@@ -1,8 +1,10 @@
 .abas__lista {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-md);
+  border-top: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
   padding-inline: var(--space-md);
+  background: var(--color-surface);
 }
 
 .abas__gatilho {
@@ -10,13 +12,19 @@
   border-bottom: 2px solid transparent;
   border-radius: 0;
   background: transparent;
-  padding: 0.6rem 0.1rem;
+  min-height: var(--tap-min);
+  margin-bottom: -1px;
+  padding: 0 0.15rem;
   color: var(--color-text-faint);
   font: 500 var(--text-sm) var(--font-display);
   cursor: pointer;
   transition:
     color var(--duration-fast) var(--ease-out-expo),
-    border-color var(--duration-fast) var(--ease-out-expo);
+    border-color var(--duration-normal) var(--ease-out-expo);
+}
+
+.abas__gatilho:focus-visible {
+  outline-offset: -4px;
 }
 
 .abas__gatilho:hover {
@@ -25,6 +33,7 @@
 
 .abas__gatilho[aria-selected='true'] {
   color: var(--color-text);
+  font-weight: 600;
   border-bottom-color: var(--color-accent);
 }
 
@@ -54,16 +63,19 @@
   }
 
   .abas__painel {
-    padding-inline: 0;
+    padding: 0 0 0.9rem;
     break-inside: avoid;
     animation: none;
   }
 
   .abas__titulo-impresso {
     display: block;
-    margin-bottom: var(--space-xs);
-    font-size: var(--text-sm);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid #bbb;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
   }
 }

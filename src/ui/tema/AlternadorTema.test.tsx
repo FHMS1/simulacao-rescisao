@@ -24,7 +24,7 @@ describe('AlternadorTema', () => {
     const user = userEvent.setup();
     render(<AlternadorTema />);
     await user.click(screen.getByRole('button', { name: /tema claro/i }));
-    expect(localStorage.getItem('exito:tema')).toBe('claro');
+    expect(localStorage.getItem('simulador:tema')).toBe('claro');
   });
 
   it('adota o tema que o script inline já pintou, sem piscar', () => {

@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import logoExito from '../../assets/exito-logo.png';
 import { calcularRescisao } from '../../domain/rescisao/calcularRescisao';
 import type { RescisaoInput } from '../../domain/rescisao/schema';
 import type { RescisaoOutput } from '../../domain/rescisao/tipos';
@@ -10,30 +9,37 @@ import { ResultadoRescisao } from '../components/ResultadoRescisao';
 import { AlternadorTema } from '../tema/AlternadorTema';
 import './simulador-rescisao.css';
 
+interface Simulacao {
+  resultado: RescisaoOutput;
+  dados: RescisaoInput;
+  geradoEm: Date;
+}
+
 export function SimuladorRescisao() {
-  const [resultado, setResultado] = useState<RescisaoOutput>();
+  const [simulacao, setSimulacao] = useState<Simulacao>();
   const [erro, setErro] = useState<string>();
   const resultadoRef = useRef<HTMLDivElement>(null);
 
   function calcular(dados: RescisaoInput) {
     try {
-      setResultado(calcularRescisao(dados));
+      setSimulacao({ resultado: calcularRescisao(dados), dados, geradoEm: new Date() });
       setErro(undefined);
       requestAnimationFrame(() => resultadoRef.current?.focus());
     } catch (causa) {
-      setResultado(undefined);
+      setSimulacao(undefined);
       setErro(causa instanceof Error ? causa.message : 'Não foi possível concluir a simulação.');
     }
   }
 
   return (
     <div className="pagina">
+      <a className="pular" href="#simulacao">
+        Ir para o simulador
+      </a>
       <header className="cabecalho">
         <div className="container cabecalho__inner">
-          {/* A arte do logo é branca sobre transparente: no tema claro a placa
-              escura é o que a mantém legível. */}
-          <span className="marca__placa">
-            <img className="marca" src={logoExito} alt="Êxito Contábil" width={320} height={214} />
+          <span className="marca" aria-hidden="true">
+            <Icone nome="calculadora" tamanho={18} />
           </span>
           <span className="cabecalho__divisor" aria-hidden="true" />
           <nav className="trilha" aria-label="Trilha de navegação">
@@ -70,18 +76,23 @@ export function SimuladorRescisao() {
           </div>
         </section>
 
-        <section className="container area-trabalho" aria-label="Simulação de rescisão">
+        <section className="container area-trabalho" id="simulacao" aria-label="Simulação de rescisão">
           <FormularioRescisao onCalcular={calcular} />
 
           <div className="area-trabalho__saida">
             {erro && (
               <p className="erro-global" role="alert">
-                {erro}
+                <Icone nome="alerta" tamanho={13} />
+                <span>{erro}</span>
               </p>
             )}
             <div className="area-trabalho__foco" ref={resultadoRef} tabIndex={-1}>
-              {resultado ? (
-                <ResultadoRescisao resultado={resultado} />
+              {simulacao ? (
+                <ResultadoRescisao
+                  resultado={simulacao.resultado}
+                  dados={simulacao.dados}
+                  geradoEm={simulacao.geradoEm}
+                />
               ) : (
                 <div className="resultado-vazio">
                   <span className="resultado-vazio__icone" aria-hidden="true">
@@ -101,7 +112,7 @@ export function SimuladorRescisao() {
 
       <footer className="rodape">
         <div className="container rodape__inner">
-          <p>Êxito Contábil · ferramenta de apoio. Não substitui TRCT, eSocial ou análise jurídica.</p>
+          <p>Ferramenta de apoio. Não substitui TRCT, eSocial ou análise jurídica.</p>
           <p className="numeric">v1.1.0</p>
         </div>
       </footer>

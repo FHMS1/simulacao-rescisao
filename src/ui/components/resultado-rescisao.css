@@ -1,0 +1,475 @@
+/* ----------------------------------------------------------------- estrutura */
+
+.resultado {
+  animation: surgir var(--duration-normal) var(--ease-out-expo);
+}
+
+.resultado__cabecalho {
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.resultado__cabecalho .kicker {
+  margin-bottom: var(--space-3xs);
+}
+
+.resultado__contexto {
+  margin-top: var(--space-3xs);
+  color: var(--color-text-faint);
+  font-size: var(--text-xs);
+}
+
+/* ------------------------------------------------------------- estado vazio */
+
+.resultado-vazio {
+  padding: var(--space-lg) var(--space-md);
+  text-align: center;
+  color: var(--color-text-faint);
+}
+
+.resultado-vazio__icone {
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  margin: 0 auto var(--space-sm);
+  border: 1px solid var(--color-accent-edge);
+  border-radius: 14px;
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.resultado-vazio h2 {
+  color: var(--color-text);
+  margin-bottom: var(--space-2xs);
+}
+
+.resultado-vazio p {
+  max-width: 34ch;
+  margin-inline: auto;
+  font-size: var(--text-sm);
+  text-wrap: pretty;
+}
+
+/* -------------------------------------------------------------------- totais */
+
+.totais {
+  padding: var(--space-md);
+  display: grid;
+  gap: var(--space-2xs);
+  /* 13rem: proventos e descontos dividem a linha; abaixo disso empilham. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+}
+
+.total {
+  min-width: 0;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-tile);
+  background: var(--color-surface);
+}
+
+.total > span {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3xs);
+  color: var(--color-text-faint);
+  font-size: var(--text-xs);
+}
+
+.total strong {
+  display: block;
+  margin-top: var(--space-3xs);
+  font: 500 var(--text-lg) var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+/* Direção do valor: o ícone do total carrega a cor semântica; o número
+   continua na cor do texto para não perder contraste. */
+.total--entrada > span .icone {
+  color: var(--color-accent);
+}
+
+.total--saida > span .icone {
+  color: var(--color-warn);
+}
+
+/* O líquido é a resposta que a pessoa abriu a ferramenta para ver: ganha a
+   linha inteira, o acento e a maior escala tipográfica da tela. */
+.total--principal {
+  grid-column: 1 / -1;
+  padding: 1.1rem 1.25rem;
+  border-color: var(--color-accent-edge);
+  background:
+    linear-gradient(135deg, var(--color-accent-soft), transparent 72%), var(--color-surface);
+  box-shadow: 0 0 0 1px var(--color-accent-soft);
+}
+
+.total--principal > span {
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: var(--text-kicker);
+}
+
+.total--principal strong {
+  margin-top: var(--space-2xs);
+  font-size: var(--text-total);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  color: var(--color-text);
+}
+
+.total--principal small {
+  display: block;
+  margin-top: var(--space-2xs);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.total--linha {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xs);
+}
+
+.total--linha strong {
+  margin-top: 0;
+  text-align: right;
+}
+
+/* ------------------------------------------------------- memória de cálculo */
+
+/* `auto-fit` decide pela largura do próprio cartão: duas colunas quando cabem
+   rótulo e valor sem quebra, uma coluna quando não. Evita media query presa à
+   largura da janela, que erra quando o cartão está estreito. */
+.memoria-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: var(--space-md);
+}
+
+.memoria-coluna {
+  min-width: 0;
+}
+
+.memoria-coluna h4 {
+  margin: 0 0 var(--space-2xs);
+  font-size: var(--text-kicker);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+}
+
+.memoria-lista {
+  margin: 0;
+}
+
+.memoria-lista--estreita {
+  max-width: 34rem;
+}
+
+.linha-memoria {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-xs);
+  padding-block: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.linha-memoria dt {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.linha-memoria dd {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* Parcelas zeradas continuam na lista (a memória é completa), mas recuam:
+   o olho vai direto ao que tem valor. */
+.linha-memoria--zero dt,
+.linha-memoria--zero dd {
+  color: var(--color-text-faint);
+  font-weight: 400;
+}
+
+.linha-memoria--total {
+  border-bottom: 0;
+  border-top: 1px solid var(--color-border-strong);
+  margin-top: var(--space-3xs);
+  padding-top: 0.65rem;
+}
+
+.linha-memoria--total dt,
+.linha-memoria--total dd {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.fonte {
+  margin-top: var(--space-xs);
+  padding-left: var(--space-xs);
+  border-left: 2px solid var(--color-accent-edge);
+  color: var(--color-text-faint);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+}
+
+.fonte + .fonte {
+  margin-top: var(--space-2xs);
+}
+
+/* --------------------------------------------------------------- alertas */
+
+.alertas {
+  padding: var(--space-sm) var(--space-md) var(--space-md);
+  border-top: 1px solid var(--color-border);
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.alerta {
+  display: flex;
+  gap: var(--space-2xs);
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+.alerta .icone {
+  flex: none;
+  margin-top: 0.15rem;
+}
+
+.alerta strong {
+  color: var(--color-text);
+}
+
+.alerta__fonte {
+  display: block;
+  margin-top: var(--space-3xs);
+  color: var(--color-text-faint);
+}
+
+.alerta--atencao {
+  border-color: var(--color-warn-edge);
+  background: var(--color-warn-soft);
+  color: var(--color-text-muted);
+}
+
+.alerta--atencao .icone,
+.alerta--atencao strong {
+  color: var(--color-warn);
+}
+
+.alerta--bloqueante {
+  border-color: var(--color-danger-edge);
+  background: var(--color-danger-soft);
+}
+
+.alerta--bloqueante .icone,
+.alerta--bloqueante strong {
+  color: var(--color-danger);
+}
+
+/* ------------------------------------------------------------- responsivo */
+
+@media (max-width: 42rem) {
+  .resultado__cabecalho {
+    flex-direction: column;
+  }
+
+  .resultado__cabecalho .botao-secundario {
+    width: 100%;
+  }
+}
+
+/* --------------------------------------------------------------- impressão */
+
+/* Elementos que só existem no papel. */
+.impressao-cabecalho,
+.impressao-rodape {
+  display: none;
+}
+
+@media print {
+  .resultado-vazio,
+  .resultado__cabecalho {
+    display: none !important;
+  }
+
+  .resultado {
+    position: static;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: none;
+    overflow: visible;
+    animation: none;
+  }
+
+  /* ---- identificação do caso */
+
+  .impressao-cabecalho {
+    display: block;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--color-accent);
+  }
+
+  .impressao-cabecalho__linha {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-sm);
+  }
+
+  .impressao-cabecalho__titulo {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  .impressao-cabecalho__data {
+    color: var(--color-text-faint);
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  .impressao-dados {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.6rem 1.25rem;
+    margin: 0.9rem 0 0;
+  }
+
+  .impressao-dados dt {
+    color: var(--color-text-faint);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .impressao-dados dd {
+    margin: 0.1rem 0 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  /* ---- totais: o papel não depende de cor de fundo (a impressora pode
+     descartá-la); a ênfase vem de borda, tamanho e peso. */
+
+  .totais {
+    padding: 0;
+    margin-bottom: 1.1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .total {
+    padding: 0.55rem 0.8rem;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    background: none;
+    box-shadow: none;
+    break-inside: avoid;
+  }
+
+  .total--principal {
+    border: 2px solid var(--color-accent);
+    padding: 0.7rem 0.9rem;
+  }
+
+  .total--principal strong {
+    font-size: 2rem;
+  }
+
+  /* ---- memória de cálculo */
+
+  .memoria-grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 1.75rem;
+  }
+
+  .linha-memoria {
+    padding-block: 0.28rem;
+  }
+
+  .linha-memoria--zero dt,
+  .linha-memoria--zero dd {
+    color: #777;
+  }
+
+  .fonte {
+    border-left-color: #999;
+  }
+
+  /* ---- alertas */
+
+  .alertas {
+    padding: 0;
+    margin-top: 1rem;
+    border: 0;
+    gap: 0.35rem;
+  }
+
+  .alerta {
+    padding: 0.25rem 0.7rem;
+    border: 0;
+    border-left: 3px solid #999;
+    border-radius: 0;
+    background: none;
+    break-inside: avoid;
+  }
+
+  .alerta--atencao {
+    border-left-color: var(--color-warn);
+  }
+
+  .alerta--bloqueante {
+    border-left-color: var(--color-danger);
+  }
+
+  .alerta__fonte {
+    color: #555;
+  }
+
+  /* ---- rodapé do documento */
+
+  .impressao-rodape {
+    display: block;
+    margin-top: 1.25rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid #bbb;
+    color: #555;
+    font-size: 0.7rem;
+    line-height: 1.5;
+    break-inside: avoid;
+  }
+}

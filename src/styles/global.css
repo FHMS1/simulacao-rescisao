@@ -7,6 +7,7 @@
 html {
   /* `color-scheme` vem do tema em tokens.css — não fixe aqui. */
   -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -18,11 +19,16 @@ body {
   font-size: var(--text-base);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition:
+    background-color var(--duration-normal) var(--ease-out-expo),
+    color var(--duration-normal) var(--ease-out-expo);
 }
 
 h1,
 h2,
 h3,
+h4,
 p,
 figure {
   margin: 0;
@@ -44,10 +50,27 @@ a:hover {
   color: var(--color-accent-strong);
 }
 
+::selection {
+  background: var(--color-accent-soft);
+}
+
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
   border-radius: var(--radius-control);
+}
+
+/* Texto só para leitores de tela. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Valores monetários e datas usam mono com dígitos tabulares para as
@@ -78,7 +101,31 @@ a:hover {
   }
 }
 
+/* Entrada curta para o que aparece dentro de um bloco já visível (campos
+   condicionais, mensagens): só opacidade e um deslocamento mínimo, para não
+   competir com a leitura. */
+@keyframes entrar {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {
@@ -86,5 +133,16 @@ a:hover {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* O papel não pode herdar transições de tema: a leitura da cor no momento da
+   impressão cairia no meio de uma transição e sairia escura. */
+@media print {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
   }
 }

@@ -1,10 +1,10 @@
 /**
  * Design tokens — direção visual "Direção A": painel de trabalho neutro,
- * com o verde da Êxito reservado ao que é resultado/confirmação.
+ * com o azul de acento reservado ao que é ação e resultado.
  *
  * A base cromática é azul-neutra (hue 265) em vez do preto esverdeado
  * anterior: como a tela é majoritariamente formulário, um fundo neutro
- * deixa o acento verde significar algo (valor apurado, estado seguro) em
+ * deixa o acento azul significar algo (valor apurado, estado seguro) em
  * vez de ser só decoração de fundo.
  *
  * Tema: `:root` é o escuro. O claro é ativado por `data-tema="claro"` no
@@ -31,12 +31,12 @@
   --color-text-muted: oklch(78% 0.012 265);
   --color-text-faint: oklch(66% 0.014 265);
 
-  /* Acento de marca — verde "êxito" */
-  --color-accent: oklch(80% 0.18 138);
-  --color-accent-strong: oklch(72% 0.17 138);
-  --color-accent-ink: oklch(20% 0.05 138); /* texto sobre fundo verde */
-  --color-accent-soft: oklch(80% 0.18 138 / 16%);
-  --color-accent-edge: oklch(80% 0.18 138 / 30%);
+  /* Acento — azul neutro, sem vínculo com marca */
+  --color-accent: oklch(76% 0.12 245);
+  --color-accent-strong: oklch(68% 0.13 250);
+  --color-accent-ink: oklch(18% 0.04 255); /* texto sobre fundo de acento */
+  --color-accent-soft: oklch(76% 0.12 245 / 16%);
+  --color-accent-edge: oklch(76% 0.12 245 / 30%);
 
   /* Semântico — proventos / atenção / bloqueante (RF-19, Alerta.nivel) */
   --color-positive: var(--color-accent);
@@ -49,13 +49,16 @@
 
   /* Cabeçalho translúcido e malha de fundo */
   --color-glass: oklch(15% 0.008 265 / 72%);
-  /* Placa atrás da marca: a arte do logo é branca sobre transparente, então
-     no tema claro ela precisa de fundo escuro próprio para não sumir. */
-  --color-plate: transparent;
 
-  /* Tipografia */
-  --font-display: 'Instrument Sans', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'SFMono-Regular', ui-monospace, monospace;
+  /* Tipografia — pilha de fontes do sistema. Nenhuma fonte é baixada de
+     terceiros: a requisição de fonte exporia o IP de quem usa o simulador e
+     contradiz a promessa de que nada sai do navegador (RNF-02). */
+  --font-display:
+    'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial,
+    sans-serif;
+  --font-mono:
+    'Cascadia Mono', 'SF Mono', 'SFMono-Regular', ui-monospace, Consolas, 'Liberation Mono',
+    monospace;
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
@@ -86,10 +89,15 @@
     0 1px 2px oklch(0% 0 0 / 40%),
     0 16px 40px -22px oklch(0% 0 0 / 70%);
 
-  /* Movimento */
+  /* Movimento: microinterações 120–220 ms, painéis 200–350 ms */
   --duration-fast: 150ms;
   --duration-normal: 320ms;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Foco e alvos de toque (WCAG 2.2 — 2.4.7 e 2.5.8) */
+  --color-ring: oklch(76% 0.12 245 / 34%);
+  --tap-min: 2.75rem;
+  --shadow-lift: 0 1px 0 oklch(100% 0 0 / 14%) inset, 0 6px 16px -8px oklch(76% 0.12 245 / 55%);
 
   color-scheme: dark;
 }
@@ -106,11 +114,11 @@
   --color-text-muted: oklch(46% 0.012 265);
   --color-text-faint: oklch(52% 0.012 265);
 
-  --color-accent: oklch(50% 0.14 145);
-  --color-accent-strong: oklch(43% 0.13 145);
-  --color-accent-ink: oklch(99% 0.01 145);
-  --color-accent-soft: oklch(50% 0.14 145 / 12%);
-  --color-accent-edge: oklch(50% 0.14 145 / 34%);
+  --color-accent: oklch(48% 0.15 255);
+  --color-accent-strong: oklch(41% 0.14 255);
+  --color-accent-ink: oklch(99% 0.01 255);
+  --color-accent-soft: oklch(48% 0.15 255 / 11%);
+  --color-accent-edge: oklch(48% 0.15 255 / 34%);
 
   --color-warn: oklch(50% 0.13 62);
   --color-warn-soft: oklch(50% 0.13 62 / 10%);
@@ -120,7 +128,9 @@
   --color-danger-edge: oklch(50% 0.19 25 / 30%);
 
   --color-glass: oklch(100% 0 0 / 78%);
-  --color-plate: oklch(22% 0.01 265);
+
+  --color-ring: oklch(48% 0.15 255 / 28%);
+  --shadow-lift: 0 1px 0 oklch(100% 0 0 / 22%) inset, 0 6px 14px -8px oklch(41% 0.14 255 / 60%);
 
   --shadow-card:
     0 1px 2px oklch(25% 0.02 265 / 7%),
@@ -149,7 +159,7 @@
     --color-text-muted: #333;
     --color-text-faint: #555;
 
-    --color-accent: #14682b;
+    --color-accent: #1f4e8c;
     --color-accent-soft: transparent;
     --color-accent-edge: #bbb;
 
@@ -160,7 +170,6 @@
 
     --shadow-card: none;
     --color-glass: #fff;
-    --color-plate: transparent;
 
     color-scheme: light;
   }

@@ -1,0 +1,390 @@
+/* ------------------------------------------------------------------- cabeçalho */
+
+.formulario__intro {
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.formulario__intro .kicker {
+  margin-bottom: var(--space-3xs);
+}
+
+.formulario__intro > p {
+  color: var(--color-text-faint);
+  font-size: var(--text-xs);
+}
+
+/* -------------------------------------------------------------------- etapas */
+
+.formulario fieldset {
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+  padding: 0 var(--space-md) var(--space-md);
+  margin: 0;
+  min-width: 0;
+}
+
+/* A <legend> é desenhada no topo do fieldset, por cima do padding-top — por
+   isso o respiro de cima mora na própria legenda. Com padding-top no fieldset,
+   a legenda encostava na linha do bloco anterior e o vão até os campos
+   dobrava. */
+.formulario legend {
+  padding: var(--space-md) 0 0;
+}
+
+.etapa__titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--text-base);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+.etapa__titulo small {
+  display: block;
+  margin-top: 0.1rem;
+  color: var(--color-text-faint);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* Marcador de etapa: numeração é hierarquia visual, não conteúdo — o leitor
+   de tela recebe só o texto da legenda (o span é aria-hidden no TSX). */
+.passo {
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: var(--color-accent-soft);
+  border: 1px solid var(--color-accent-edge);
+  color: var(--color-accent);
+  font: 600 var(--text-xs) var(--font-mono);
+}
+
+.campos {
+  display: grid;
+  gap: 1rem 0.9rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11.5rem), 1fr));
+  margin-top: var(--space-sm);
+}
+
+/* ------------------------------------------------------------------- campos */
+
+/* `display: block` (e não grid) é proposital: o rótulo é um nó de texto solto
+   seguido do <span> da dica ("Opcional"). Em grid, cada um vira uma linha e a
+   dica cai embaixo do rótulo; em fluxo normal, os dois ficam na mesma linha. */
+.campo {
+  display: block;
+  min-width: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  font-weight: 500;
+}
+
+.campo > input,
+.campo > select {
+  margin-top: var(--space-3xs);
+}
+
+.campo--largo {
+  grid-column: 1 / -1;
+}
+
+.campo span {
+  color: var(--color-text-faint);
+  font-weight: 400;
+}
+
+/* Campos que surgem por escolha do usuário entram com um fade curto: a grade
+   reorganiza as linhas de imediato, mas o conteúdo novo não "estala". */
+.campo--condicional,
+.opcoes--condicional {
+  animation: entrar var(--duration-normal) var(--ease-out-expo) both;
+}
+
+input,
+select {
+  width: 100%;
+  min-height: var(--tap-min);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: 0.55rem 0.75rem;
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 400;
+  transition:
+    border-color var(--duration-fast) var(--ease-out-expo),
+    background var(--duration-fast) var(--ease-out-expo),
+    box-shadow var(--duration-fast) var(--ease-out-expo);
+}
+
+select {
+  cursor: pointer;
+}
+
+/* Números e datas em mono tabular: as colunas do formulário alinham e o
+   contador confere valor a valor sem reler. */
+input[type='number'],
+input[type='date'] {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+input::placeholder {
+  color: var(--color-text-faint);
+  opacity: 0.8;
+}
+
+input:hover,
+select:hover {
+  border-color: var(--color-text-faint);
+}
+
+/* O anel de foco global (2px, acento) continua valendo — aqui só encostamos
+   ele no controle, trocamos a borda e acrescentamos o halo, sem remover o
+   indicador. */
+input:focus-visible,
+select:focus-visible {
+  border-color: var(--color-accent);
+  outline-offset: 1px;
+  box-shadow: 0 0 0 4px var(--color-ring);
+}
+
+input[aria-invalid='true'] {
+  border-color: var(--color-danger);
+  background: var(--color-danger-soft);
+}
+
+input[aria-invalid='true']:focus-visible {
+  box-shadow: 0 0 0 4px var(--color-danger-soft);
+}
+
+/* ------------------------------------------------------------------ opções */
+
+.opcoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin-top: var(--space-sm);
+}
+
+.opcoes label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  min-height: 2.5rem;
+  padding: 0.4rem 0.85rem 0.4rem 0.7rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    border-color var(--duration-fast) var(--ease-out-expo),
+    background var(--duration-fast) var(--ease-out-expo),
+    color var(--duration-fast) var(--ease-out-expo);
+}
+
+.opcoes label:hover {
+  border-color: var(--color-text-faint);
+}
+
+/* Seleção visível além da caixa marcada: quem passa o olho pela lista enxerga
+   o que está ligado sem ler cada item. */
+.opcoes label:has(input:checked) {
+  border-color: var(--color-accent-edge);
+  background: var(--color-accent-soft);
+  color: var(--color-text);
+}
+
+.opcoes label:has(input:focus-visible) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+input[type='checkbox'] {
+  width: 1.1rem;
+  min-height: 1.1rem;
+  height: 1.1rem;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+input[type='checkbox']:focus-visible {
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* --------------------------------------------------------- bloco recolhível */
+
+.bloco-opcional {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.bloco-opcional summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: 3.6rem;
+  padding: 0 var(--space-md);
+  font-size: var(--text-base);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+  transition: background var(--duration-fast) var(--ease-out-expo);
+}
+
+.bloco-opcional summary::-webkit-details-marker {
+  display: none;
+}
+
+.bloco-opcional summary:hover {
+  background: var(--color-surface);
+}
+
+.bloco-opcional summary:focus-visible {
+  outline-offset: -3px;
+}
+
+.bloco-opcional__seta {
+  margin-left: auto;
+  color: var(--color-text-faint);
+  transition: transform var(--duration-normal) var(--ease-out-expo);
+}
+
+.bloco-opcional[open] .bloco-opcional__seta {
+  transform: rotate(90deg);
+}
+
+.bloco-opcional__corpo {
+  padding: 0 var(--space-md) var(--space-md);
+}
+
+.bloco-opcional[open] .bloco-opcional__corpo {
+  animation: entrar var(--duration-normal) var(--ease-out-expo) both;
+}
+
+.bloco-opcional__subtitulo {
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 1px dashed var(--color-border-strong);
+  color: var(--color-text-faint);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------- mensagens */
+
+.erro-campo {
+  display: block;
+  margin-top: var(--space-3xs);
+  color: var(--color-danger);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  animation: entrar var(--duration-fast) var(--ease-out-expo) both;
+}
+
+.erro,
+.erro-global {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2xs);
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--color-danger-edge);
+  border-radius: var(--radius-control);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+  animation: entrar var(--duration-normal) var(--ease-out-expo) both;
+}
+
+.erro {
+  margin: var(--space-sm) 0 0;
+}
+
+.formulario > .erro {
+  margin: var(--space-sm) var(--space-md);
+}
+
+.erro .icone,
+.erro-global .icone {
+  flex: none;
+  margin-top: 0.15rem;
+}
+
+/* ----------------------------------------------------------- barra de ação */
+
+/* Gruda no rodapé da janela: o formulário é longo e o botão principal não
+   deve sumir da tela enquanto se preenche. */
+.formulario__acao {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  padding: var(--space-xs) var(--space-md);
+  background: color-mix(in oklch, var(--color-surface) 88%, transparent);
+  backdrop-filter: blur(12px) saturate(140%);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.formulario__acao p {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  color: var(--color-text-faint);
+  font-size: var(--text-xs);
+}
+
+@media (max-width: 42rem) {
+  /* Em telas pequenas o iOS aplica zoom em campos com fonte menor que 16px. */
+  input,
+  select {
+    font-size: 1rem;
+  }
+
+  .campo--largo {
+    grid-column: auto;
+  }
+
+  .formulario__intro,
+  .formulario__acao {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .formulario__acao {
+    gap: var(--space-2xs);
+  }
+
+  .formulario__acao .botao-primario {
+    width: 100%;
+  }
+}
+
+@media print {
+  .formulario {
+    display: none !important;
+  }
+}

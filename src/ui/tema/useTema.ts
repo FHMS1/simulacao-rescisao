@@ -6,7 +6,7 @@ export type Tema = 'claro' | 'escuro';
  * Chave e atributo são espelhados pelo script inline de `index.html`, que
  * aplica o tema antes da primeira pintura. Mudou aqui, mude lá.
  */
-const CHAVE_ARMAZENAMENTO = 'exito:tema';
+const CHAVE_ARMAZENAMENTO = 'simulador:tema';
 
 function ehTema(valor: unknown): valor is Tema {
   return valor === 'claro' || valor === 'escuro';
