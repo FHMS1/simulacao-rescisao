@@ -45,6 +45,10 @@ export function ResultadoRescisao({ resultado }: ResultadoRescisaoProps) {
         <Linha nome="Férias em dobro" valor={proventos.feriasEmDobro} />
         <Linha nome="Férias proporcionais" valor={proventos.feriasProporcionais} />
         <Linha nome="13º proporcional" valor={proventos.decimoTerceiroProporcional} />
+        {proventos.incentivoPDV > 0 && <Linha nome="Incentivo do PDV" valor={proventos.incentivoPDV} />}
+        {proventos.indenizacaoArt479 > 0 && (
+          <Linha nome="Indenização art. 479" valor={proventos.indenizacaoArt479} />
+        )}
       </dl>
       <dl>
         <h4>Descontos</h4>
@@ -54,6 +58,9 @@ export function ResultadoRescisao({ resultado }: ResultadoRescisaoProps) {
         <Linha nome="Faltas" valor={descontos.descontoFaltas} />
         <Linha nome="Adiantamento 13º" valor={descontos.adiantamentoDecimoTerceiro} />
         <Linha nome="Outros descontos" valor={descontos.outrosDescontos} />
+        {descontos.indenizacaoArt480 > 0 && (
+          <Linha nome="Indenização art. 480" valor={descontos.indenizacaoArt480} />
+        )}
       </dl>
     </div>
   );

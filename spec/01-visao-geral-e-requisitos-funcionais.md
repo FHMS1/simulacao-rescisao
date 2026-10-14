@@ -27,7 +27,11 @@ Numeração estável — ao alterar um requisito, não reutilize o número de um
 
 ### Bloco B — Motivo do desligamento
 - **RF-03**: O sistema deve suportar, no mínimo, os seguintes motivos de rescisão, cada um com seu próprio conjunto de verbas/multas aplicáveis (detalhado em `spec/02`):
-  dispensa sem justa causa; pedido de demissão; dispensa por justa causa; rescisão por acordo (art. 484-A CLT); término de contrato por prazo determinado; rescisão antecipada pelo empregador (prazo determinado); rescisão antecipada pelo empregado (prazo determinado); rescisão indireta; culpa recíproca/força maior.
+  dispensa sem justa causa; pedido de demissão; dispensa por justa causa; rescisão por acordo (art. 484-A CLT); término de contrato por prazo determinado; rescisão antecipada pelo empregador (prazo determinado); rescisão antecipada pelo empregado (prazo determinado); rescisão indireta; culpa recíproca (Súmula 14 TST); força maior (art. 502 CLT); falecimento do empregado; aposentadoria voluntária; plano de demissão voluntária (PDV).
+- **RF-03b**: Com cláusula assecuratória (art. 481 CLT), a rescisão antecipada de contrato a termo segue as regras do contrato por prazo indeterminado (Súmula 163 TST): pelo empregador, como dispensa sem justa causa; pelo empregado, como pedido de demissão.
+- **RF-03c**: No PDV, o usuário informa o valor do incentivo, a multa do FGTS prevista no plano (0%, 20% ou 40%) e se o plano paga aviso indenizado. O incentivo é tratado como indenização (fora das bases de INSS, IRRF e FGTS).
+
+- **RF-03a**: Na rescisão antecipada de contrato a termo (pelo empregador ou pelo empregado), o sistema exige a **data de término prevista** e calcula a indenização dos arts. 479 (provento) ou 480 (desconto) da CLT, conforme `spec/02`, seção 3.2. O usuário pode indicar a existência de **cláusula assecuratória** (art. 481), que afasta a indenização.
 
 ### Bloco C — Aviso prévio
 - **RF-04**: Calcular dias de aviso prévio proporcional conforme Lei 12.506/2011 (30 dias + 3 dias por ano completo de serviço, limitado a 90 dias).
@@ -47,6 +51,8 @@ Numeração estável — ao alterar um requisito, não reutilize o número de um
 
 ### Bloco G — Verbas variáveis
 - **RF-12**: Permitir integrar médias de horas extras, adicional noturno, comissões, DSR sobre variáveis, insalubridade, periculosidade e outras verbas. No modo direto, os campos recebem as médias mensais já apuradas; no modo 3/6/12 meses, recebem os totais acumulados no período e o motor divide a soma pela quantidade selecionada.
+
+- **RF-14a**: O usuário pode pedir o cálculo automático do DSR sobre horas extras, comissões e adicional noturno, informando dias úteis e domingos/feriados do mês. O DSR calculado substitui o valor digitado e integra a média usada em saldo, aviso, férias e 13º.
 
 ### Bloco H — Descontos adicionais
 - **RF-13**: Suportar descontos de adiantamento salarial, vale-transporte, vale-alimentação, convênios, empréstimos/consignado e outros descontos com descrição livre.

@@ -14,7 +14,11 @@ export type MotivoRescisao =
   | 'antecipada_empregador_prazo_determinado'
   | 'antecipada_empregado_prazo_determinado'
   | 'rescisao_indireta'
-  | 'culpa_reciproca_forca_maior';
+  | 'culpa_reciproca'
+  | 'forca_maior'
+  | 'falecimento'
+  | 'aposentadoria_voluntaria'
+  | 'pdv';
 
 export type TipoAvisoPrevio = 'indenizado' | 'trabalhado' | 'parcial' | 'sem_aviso';
 export type TipoSalario = 'mensalista' | 'horista' | 'comissionista' | 'misto';
@@ -33,6 +37,10 @@ export interface DadosGerais {
     valor: number;
   };
   observacaoConvencaoColetiva?: string;
+  /** ISO. Obrigatória nos motivos `antecipada_*_prazo_determinado`, e >= desligamento. '' = não informada. */
+  dataTerminoPrevista?: string;
+  /** CLT art. 481. Quando true, a indenização dos arts. 479/480 não é calculada. */
+  clausulaAssecuratoria?: boolean;
 }
 
 export interface DadosAvisoPrevio {
@@ -77,6 +85,8 @@ export interface VerbasVariaveis {
   insalubridade?: number;
   periculosidade?: number;
   outras?: number;
+  /** Substitui `dsrSobreVariaveis` quando presente — spec/02, 3.3. */
+  dsrAutomatico?: { diasUteis: number; diasDescanso: number };
 }
 
 export interface DescontosAdicionais {
@@ -99,6 +109,12 @@ export interface RescisaoInput {
   verbasVariaveis: VerbasVariaveis;
   descontosAdicionais: DescontosAdicionais;
   dataPagamento?: string; // usado no RF-22 (multa por atraso) — planejado
+  /** Obrigatório quando `motivo === 'pdv'` — spec/02, 3.4. */
+  pdv?: {
+    valorIncentivo: number;
+    multaFGTS: 0 | 0.2 | 0.4;
+    pagaAvisoIndenizado: boolean;
+  };
 }
 ```
 
@@ -144,6 +160,8 @@ export interface ProventosDetalhados {
   decimoTerceiroProporcional: number;
   abonoPecuniario: number;
   mediasIntegradas: number;
+  indenizacaoArt479: number; // rescisão antecipada pelo empregador (spec/02, 3.2)
+  incentivoPDV: number; // spec/02, 3.4
   totalProventos: number;
 }
 
@@ -156,6 +174,7 @@ export interface DescontosDetalhados {
   adiantamentoDecimoTerceiro: number;
   descontoAbonoPecuniario: number;
   pensaoAlimenticia: number;
+  indenizacaoArt480: number; // teto estimado — rescisão antecipada pelo empregado
   outrosDescontos: number;
   totalDescontos: number;
 }

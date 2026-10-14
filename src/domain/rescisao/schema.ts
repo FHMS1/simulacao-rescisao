@@ -13,7 +13,11 @@ export const motivosRescisao = [
   'antecipada_empregador_prazo_determinado',
   'antecipada_empregado_prazo_determinado',
   'rescisao_indireta',
-  'culpa_reciproca_forca_maior',
+  'culpa_reciproca',
+  'forca_maior',
+  'falecimento',
+  'aposentadoria_voluntaria',
+  'pdv',
 ] as const;
 
 export const rescisaoInputSchema = z
@@ -31,6 +35,10 @@ export const rescisaoInputSchema = z
         .object({ tipo: z.enum(['valor_fixo', 'percentual']), valor: dinheiro })
         .optional(),
       observacaoConvencaoColetiva: z.string().trim().max(500).optional(),
+      // Contrato a termo rescindido antes do prazo (CLT, arts. 479 e 480).
+      // '' é o que um <input type="date"> vazio entrega; vale como "não informado".
+      dataTerminoPrevista: dataISO.or(z.literal('')).optional(),
+      clausulaAssecuratoria: z.boolean().optional(),
     }),
     avisoPrevio: z.object({
       tipo: z.enum(['indenizado', 'trabalhado', 'parcial', 'sem_aviso']),
@@ -67,6 +75,14 @@ export const rescisaoInputSchema = z
       insalubridade: dinheiro.optional(),
       periculosidade: dinheiro.optional(),
       outras: dinheiro.optional(),
+      // DSR sobre horas extras, comissões e adicional noturno (Lei 605/1949;
+      // Súm. 172 e 27 TST). Quando informado, substitui `dsrSobreVariaveis`.
+      dsrAutomatico: z
+        .object({
+          diasUteis: inteiroNaoNegativo.min(1).max(31),
+          diasDescanso: inteiroNaoNegativo.max(10),
+        })
+        .optional(),
     }),
     descontosAdicionais: z.object({
       adiantamentoSalarial: dinheiro.optional(),
@@ -77,6 +93,14 @@ export const rescisaoInputSchema = z
       outros: dinheiro.optional(),
       descricaoOutros: z.string().trim().max(200).optional(),
     }),
+    // Programa de demissão voluntária: incentivo e regras conforme o regulamento do plano.
+    pdv: z
+      .object({
+        valorIncentivo: dinheiro,
+        multaFGTS: z.union([z.literal(0), z.literal(0.2), z.literal(0.4)]),
+        pagaAvisoIndenizado: z.boolean(),
+      })
+      .optional(),
     dataPagamento: dataISO.optional(),
   })
   .superRefine((dados, contexto) => {
@@ -85,6 +109,32 @@ export const rescisaoInputSchema = z
         code: 'custom',
         path: ['dadosGerais', 'dataDesligamento'],
         message: 'A data de desligamento não pode ser anterior à admissão',
+      });
+    }
+    if (
+      dados.motivo === 'antecipada_empregador_prazo_determinado' ||
+      dados.motivo === 'antecipada_empregado_prazo_determinado'
+    ) {
+      const termino = dados.dadosGerais.dataTerminoPrevista;
+      if (!termino) {
+        contexto.addIssue({
+          code: 'custom',
+          path: ['dadosGerais', 'dataTerminoPrevista'],
+          message: 'Informe a data de término prevista do contrato',
+        });
+      } else if (termino < dados.dadosGerais.dataDesligamento) {
+        contexto.addIssue({
+          code: 'custom',
+          path: ['dadosGerais', 'dataTerminoPrevista'],
+          message: 'O término previsto não pode ser anterior ao desligamento',
+        });
+      }
+    }
+    if (dados.motivo === 'pdv' && !dados.pdv) {
+      contexto.addIssue({
+        code: 'custom',
+        path: ['pdv'],
+        message: 'Informe os dados do plano de demissão voluntária',
       });
     }
     if (dados.ferias.periodosEmDobro > dados.ferias.periodosVencidos) {

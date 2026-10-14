@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { RescisaoInput } from '../../domain/rescisao/schema';
 import { useRescisaoForm } from '../forms/useRescisaoForm';
 import { Icone } from './Icone';
@@ -11,12 +11,22 @@ const numero = { setValueAs: (valor: string) => (valor === '' ? undefined : Numb
 
 export function FormularioRescisao({ onCalcular }: FormularioRescisaoProps) {
   const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitted } } = useRescisaoForm();
+  const motivo = watch('motivo');
+  const termoAntecipado =
+    motivo === 'antecipada_empregador_prazo_determinado' ||
+    motivo === 'antecipada_empregado_prazo_determinado';
+  // Campos de PDV só valem para este motivo; ao trocar, o objeto parcial sairia
+  // inválido no schema e bloquearia o cálculo dos demais motivos.
+  useEffect(() => {
+    if (motivo !== 'pdv') setValue('pdv', undefined);
+  }, [motivo, setValue]);
   const aviso = watch('avisoPrevio.tipo');
   const feriasProporcionais = watch('ferias.calcularProporcional');
   const integrarVariaveis = watch('verbasVariaveis.integrar');
   const modoVariaveis = watch('verbasVariaveis.modo');
   const [temPensao, setTemPensao] = useState(false);
   const [temAbono, setTemAbono] = useState(false);
+  const [dsrAuto, setDsrAuto] = useState(false);
 
   return (
     <form className="formulario" onSubmit={handleSubmit(onCalcular)} noValidate>
@@ -38,13 +48,18 @@ export function FormularioRescisao({ onCalcular }: FormularioRescisaoProps) {
           <label className="campo">Admissão *<input type="date" {...register('dadosGerais.dataAdmissao')} aria-invalid={!!errors.dadosGerais?.dataAdmissao} /></label>
           <label className="campo">Desligamento *<input type="date" {...register('dadosGerais.dataDesligamento')} aria-invalid={!!errors.dadosGerais?.dataDesligamento} /></label>
           <label className="campo">Salário base *<input type="number" min="0" step="0.01" {...register('dadosGerais.salarioBase', numero)} aria-invalid={!!errors.dadosGerais?.salarioBase} /></label>
-          <label className="campo">Motivo *<select {...register('motivo')}><option value="sem_justa_causa">Dispensa sem justa causa</option><option value="pedido_demissao">Pedido de demissão</option><option value="justa_causa">Justa causa</option><option value="acordo_484a">Acordo — art. 484-A</option><option value="termino_prazo_determinado">Término de contrato determinado</option><option value="antecipada_empregador_prazo_determinado">Antecipação pelo empregador</option><option value="antecipada_empregado_prazo_determinado">Antecipação pelo empregado</option><option value="rescisao_indireta">Rescisão indireta</option><option value="culpa_reciproca_forca_maior">Culpa recíproca / força maior</option></select></label>
+          <label className="campo">Motivo *<select {...register('motivo')}><option value="sem_justa_causa">Dispensa sem justa causa</option><option value="pedido_demissao">Pedido de demissão</option><option value="justa_causa">Justa causa</option><option value="acordo_484a">Acordo — art. 484-A</option><option value="termino_prazo_determinado">Término de contrato determinado</option><option value="antecipada_empregador_prazo_determinado">Antecipação pelo empregador</option><option value="antecipada_empregado_prazo_determinado">Antecipação pelo empregado</option><option value="rescisao_indireta">Rescisão indireta</option><option value="culpa_reciproca">Culpa recíproca (Súmula 14 TST)</option><option value="forca_maior">Força maior (art. 502)</option><option value="falecimento">Falecimento do empregado</option><option value="aposentadoria_voluntaria">Aposentadoria voluntária</option><option value="pdv">PDV (demissão voluntária)</option></select></label>
           <label className="campo">Contrato<select {...register('dadosGerais.tipoContrato')}><option value="indeterminado">Prazo indeterminado</option><option value="determinado">Prazo determinado</option></select></label>
           <label className="campo">Tipo de salário<select {...register('dadosGerais.tipoSalario')}><option value="mensalista">Mensalista</option><option value="horista">Horista</option><option value="comissionista">Comissionista</option><option value="misto">Misto</option></select></label>
           <label className="campo">Dependentes IRRF<input type="number" min="0" step="1" {...register('dadosGerais.dependentesIRRF', numero)} /></label>
+          {termoAntecipado && <label className="campo">Término previsto do contrato *<input type="date" {...register('dadosGerais.dataTerminoPrevista')} aria-invalid={!!errors.dadosGerais?.dataTerminoPrevista} /></label>}
+          {motivo === 'pdv' && <><label className="campo">Incentivo do PDV *<input type="number" min="0" step="0.01" {...register('pdv.valorIncentivo', numero)} /></label><label className="campo">Multa do FGTS no plano<select {...register('pdv.multaFGTS', { setValueAs: Number })}><option value="0">Sem multa</option><option value="0.2">20%</option><option value="0.4">40%</option></select></label></>}
           {temPensao && <><label className="campo">Tipo de pensão<select {...register('dadosGerais.pensaoAlimenticia.tipo')}><option value="valor_fixo">Valor fixo apurado</option><option value="percentual">Percentual — exige revisão</option></select></label><label className="campo">Valor ou percentual<input type="number" min="0" step="0.01" {...register('dadosGerais.pensaoAlimenticia.valor', numero)} /></label></>}
         </div>
-        <div className="opcoes"><label><input type="checkbox" checked={temPensao} onChange={(evento) => { setTemPensao(evento.target.checked); if (!evento.target.checked) setValue('dadosGerais.pensaoAlimenticia', undefined); }} /> Incluir pensão alimentícia</label></div>
+        <div className="opcoes">
+          {motivo === 'pdv' && <label><input type="checkbox" {...register('pdv.pagaAvisoIndenizado')} /> Plano prevê pagamento do aviso indenizado</label>}
+          {termoAntecipado && <label><input type="checkbox" {...register('dadosGerais.clausulaAssecuratoria')} /> Contrato tem cláusula assecuratória (art. 481)</label>}
+          <label><input type="checkbox" checked={temPensao} onChange={(evento) => { setTemPensao(evento.target.checked); if (!evento.target.checked) setValue('dadosGerais.pensaoAlimenticia', undefined); }} /> Incluir pensão alimentícia</label></div>
         {errors.dadosGerais && <p className="erro" role="alert">Revise salário e datas do contrato.</p>}
       </fieldset>
 
@@ -91,6 +106,8 @@ export function FormularioRescisao({ onCalcular }: FormularioRescisaoProps) {
           <label className="campo">Insalubridade<input type="number" min="0" step="0.01" {...register('verbasVariaveis.insalubridade', numero)} /></label>
           <label className="campo">Periculosidade<input type="number" min="0" step="0.01" {...register('verbasVariaveis.periculosidade', numero)} /></label>
           <label className="campo">Outras médias<input type="number" min="0" step="0.01" {...register('verbasVariaveis.outras', numero)} /></label>
+          {dsrAuto && <><label className="campo">Dias úteis do mês *<input type="number" min="1" max="31" step="1" {...register('verbasVariaveis.dsrAutomatico.diasUteis', numero)} /></label><label className="campo">Domingos e feriados *<input type="number" min="0" max="10" step="1" {...register('verbasVariaveis.dsrAutomatico.diasDescanso', numero)} /></label></>}
+          <div className="opcoes campo--largo"><label><input type="checkbox" checked={dsrAuto} onChange={(evento) => { setDsrAuto(evento.target.checked); if (!evento.target.checked) setValue('verbasVariaveis.dsrAutomatico', undefined); }} /> Calcular DSR automaticamente (substitui o valor digitado)</label></div>
         </div>}
         <div className="campos campos--3">
           <label className="campo">Adiantamento salarial<input type="number" min="0" step="0.01" {...register('descontosAdicionais.adiantamentoSalarial', numero)} /></label>

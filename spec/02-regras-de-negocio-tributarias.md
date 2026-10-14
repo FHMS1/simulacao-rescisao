@@ -34,6 +34,27 @@ A primeira versão do simulador (vanilla JS) incluía as férias (vencidas, prop
 - No pedido de demissão sem cumprimento do aviso, são descontados os dias não cumpridos.
 - No acordo do art. 484-A, a redução pela metade incide somente sobre a parcela indenizada restante; a parcela efetivamente trabalhada mantém sua remuneração normal.
 
+## 3.2. Indenização por rescisão antecipada de contrato a termo (arts. 479 e 480)
+
+- **Art. 479 (empregador rompe antes do termo)**: indenização igual à **metade da remuneração** a que o empregado teria direito até o término do contrato. Entra como provento (`proventos.indenizacaoArt479`).
+- **Art. 480 (empregado rompe antes do termo)**: indenização ao empregador pelos prejuízos comprovados, **limitada ao valor do art. 479**. O simulador não conhece o prejuízo real: lança o **teto** como desconto (`descontos.indenizacaoArt480`) e emite alerta. O desconto na rescisão também respeita o limite de **um mês de remuneração** (CLT, art. 477, §5º).
+- **Cálculo**: `salarioReferencia ÷ 30 × dias corridos entre o desligamento e o término previsto ÷ 2`, com a remuneração de referência igual à usada nas demais verbas (salário base + médias integradas). A contagem em dias reutiliza a convenção de 30 dias do aviso prévio.
+- **Cláusula assecuratória (art. 481)**: quando existe e o direito de rescindir antecipadamente é exercido, aplicam-se as regras do contrato por prazo indeterminado (Súmula 163 TST). O simulador **não** calcula a indenização dos arts. 479/480 e trata o desligamento como dispensa sem justa causa (se o empregador rompeu) ou pedido de demissão (se o empregado rompeu), com aviso prévio e multa do FGTS correspondentes.
+- **Sem cláusula assecuratória**: não há aviso prévio (`diasAvisoPrevio = 0`).
+- **Incidência**: tratada como indenização — fora das bases de INSS (Decreto 3.048/1999, art. 214, §9º), de IRRF (Lei 7.713/1988, art. 6º, V) e de FGTS. **Controverso — confirmar com Fabio**: a premissa está implementada e sinalizada em alerta no resultado; deve ser validada antes de uso com clientes. A multa de 40% do FGTS sobre o saldo, quando devida, continua conforme a seção 4.
+
+## 3.3. DSR sobre verbas variáveis
+
+- **Base**: horas extras + comissões + adicional noturno. Insalubridade e periculosidade ficam fora, pois são parcelas fixas que já remuneram o descanso (Lei 605/1949, art. 7º; Súmulas 172 e 27 do TST).
+- **Fórmula**: `base ÷ dias úteis × domingos e feriados do mês`, arredondado a centavos.
+- Quando o cálculo automático é solicitado, o resultado **substitui** o DSR digitado e integra a média de referência (spec 02, tabela de incidência — mesma natureza das verbas que reflete).
+- No modo "totais acumulados de N meses", a proporção de dias do mês informado é aplicada ao total acumulado — aproximação sinalizada em alerta. Para exatidão, calcule o DSR mês a mês e informe o valor.
+
+## 3.4. PDV
+
+- O incentivo é lançado como provento indenizatório, fora das bases de INSS, IRRF e FGTS (Súmula 215 STJ; Decreto 3.048/1999, art. 214, §9º). **Controverso — confirmar com Fabio**: depende da natureza do plano; o simulador alerta.
+- Aviso e multa do FGTS seguem o regulamento do plano e são informados pelo usuário.
+
 ## 3.1. Contagem de avos
 
 - Para o 13º salário, cada mês com pelo menos 15 dias de vínculo conta como um avo, conforme o art. 1º, §2º, da Lei 4.090/1962.
@@ -52,7 +73,23 @@ A primeira versão do simulador (vanilla JS) incluía as férias (vencidas, prop
 | Rescisão antecipada pelo empregador (prazo determinado) | 40%, além da indenização do art. 479 CLT | Integral, observada a sistemática de saque escolhida pelo trabalhador | A confirmar conforme os requisitos legais |
 | Rescisão antecipada pelo empregado (prazo determinado) | Indenização do art. 480 CLT ao empregador (situação inversa) | Não tem direito | Não tem direito |
 | Rescisão indireta | 40% | Integral | Tem direito |
-| Culpa recíproca / força maior | 20% | Integral, observada a sistemática de saque escolhida pelo trabalhador | A confirmar conforme entendimento aplicável |
+| Culpa recíproca (CLT, art. 484; Súmula 14 TST) | 20% | Integral | A confirmar conforme entendimento aplicável |
+| Força maior (CLT, art. 502; Lei 8.036/1990, art. 18, §2º) | 20% | Integral | A confirmar conforme entendimento aplicável |
+| Falecimento do empregado | 0% | Integral, pelos dependentes habilitados (Lei 6.858/1980) | Não se aplica |
+| Aposentadoria voluntária | 0% | Permitido (Lei 8.036/1990, art. 20, III) | Não tem direito |
+| PDV | Conforme o regulamento do plano (0%, 20% ou 40%) | Integral | A confirmar conforme o plano |
+
+**Verbas por motivo (além do FGTS):**
+
+| Motivo | Aviso prévio | 13º proporcional | Férias proporcionais |
+|---|---|---|---|
+| Culpa recíproca | Pela metade, se indenizado (Súmula 14 TST) | 50% | 50% — **controverso, confirmar com Fabio**; o simulador alerta |
+| Força maior | Não é devido | 100% | 100% |
+| Falecimento | Não é devido | 100% | 100% (vencidas e proporcionais), pagas aos dependentes |
+| Aposentadoria voluntária | Como pedido de demissão (desconto se não cumprido) | 100% | 100% |
+| PDV | Conforme o plano informado | 100% | 100% |
+
+Os percentuais de 50% incidem sobre o **valor** da verba, não sobre os avos, para não distorcer a metade por arredondamento (ex.: 7 avos × 0,5).
 
 **Fontes operacionais para contratos a termo**: a extinção normal permite movimentar a conta vinculada conforme o art. 20, IX, da Lei 8.036/1990. Na rescisão antecipada por iniciativa do empregador, o Manual do FGTS Digital, versão 1.40 de 27/02/2026, classifica o desligamento com multa rescisória de 40%. A existência de cláusula assecuratória do art. 481 da CLT pode alterar o tratamento do aviso prévio e deve ser confirmada no caso concreto.
 
@@ -82,7 +119,10 @@ Situações que impedem ou restringem a dispensa sem justa causa e que o simulad
 - Súmula 305/TST
 - Lei 12.506/2011
 - Lei 4.090/1962, art. 1º, §§1º e 2º
-- CLT, arts. 477 (§§6º e 8º), 479, 480, 484-A
+- CLT, arts. 477 (§§5º, 6º e 8º), 479, 480, 481, 484, 484-A, 501 e 502
+- Lei 605/1949, art. 7º; Lei 6.858/1980
+- Súmulas 14, 27, 163 e 172 do TST; Súmula 215 do STJ; STF, ADI 1721
+- Lei 8.036/1990, arts. 18, §2º, e 20, III
 - Lei 8.036/1990 (FGTS), art. 18
 - Manual de Orientação do eSocial para o Empregador Doméstico (critério operacional de 15 dias para férias proporcionais)
 - ADCT, art. 10, II, "b"

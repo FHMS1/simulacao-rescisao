@@ -100,16 +100,68 @@ const REGRAS_POR_MOTIVO: Readonly<Record<MotivoRescisao, Readonly<RegraPorMotivo
     artigoEspecial: null,
     exigeAnaliseManual: false,
   },
-  culpa_reciproca_forca_maior: {
-    tratamentoAviso: 'depende_decisao_judicial',
+  // Súmula 14 TST + CLT, art. 484: culpa recíproca reconhecida em juízo reduz à
+  // metade o aviso, o 13º e a multa do FGTS (20%). Férias proporcionais pela
+  // metade é entendimento controverso — o orquestrador emite alerta.
+  culpa_reciproca: {
+    tratamentoAviso: 'pago_metade_empregador',
     aliquotaMultaFGTS: 0.2,
     percentualSaqueFGTS: 1,
     temSeguroDesemprego: null,
-    percentualFeriasProporcionais: null,
-    percentualDecimoTerceiro: null,
+    percentualFeriasProporcionais: 0.5,
+    percentualDecimoTerceiro: 0.5,
     artigoEspecial: null,
-    exigeAnaliseManual: true,
+    exigeAnaliseManual: false,
   },
+  // CLT, art. 502 e Lei 8.036/1990, art. 18, §2º: extinção da empresa por força
+  // maior — sem aviso, multa do FGTS de 20%.
+  forca_maior: {
+    tratamentoAviso: 'nao_aplicavel',
+    aliquotaMultaFGTS: 0.2,
+    percentualSaqueFGTS: 1,
+    temSeguroDesemprego: null,
+    percentualFeriasProporcionais: 1,
+    percentualDecimoTerceiro: 1,
+    artigoEspecial: null,
+    exigeAnaliseManual: false,
+  },
+  // Lei 6.858/1980: verbas pagas aos dependentes habilitados; sem aviso e sem
+  // multa — o contrato se extingue sem iniciativa do empregador (CLT, art. 483, §2º).
+  falecimento: {
+    tratamentoAviso: 'nao_aplicavel',
+    aliquotaMultaFGTS: 0,
+    percentualSaqueFGTS: 1,
+    temSeguroDesemprego: false,
+    percentualFeriasProporcionais: 1,
+    percentualDecimoTerceiro: 1,
+    artigoEspecial: null,
+    exigeAnaliseManual: false,
+  },
+  // Tratada como pedido de demissão; saque do FGTS permitido na aposentadoria
+  // (Lei 8.036/1990, art. 20, III), sem multa rescisória.
+  aposentadoria_voluntaria: {
+    tratamentoAviso: 'descontavel_empregado',
+    aliquotaMultaFGTS: 0,
+    percentualSaqueFGTS: 1,
+    temSeguroDesemprego: false,
+    percentualFeriasProporcionais: 1,
+    percentualDecimoTerceiro: 1,
+    artigoEspecial: null,
+    exigeAnaliseManual: false,
+  },
+  // Aviso e multa do FGTS dependem do regulamento do plano: o orquestrador
+  // substitui estes valores pelos informados em `pdv`.
+  pdv: {
+    tratamentoAviso: 'pago_empregador',
+    aliquotaMultaFGTS: 0,
+    percentualSaqueFGTS: 1,
+    temSeguroDesemprego: null,
+    percentualFeriasProporcionais: 1,
+    percentualDecimoTerceiro: 1,
+    artigoEspecial: null,
+    exigeAnaliseManual: false,
+  },
+
 };
 
 export function obterRegraPorMotivo(motivo: MotivoRescisao): Readonly<RegraPorMotivo> {

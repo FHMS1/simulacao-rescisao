@@ -11,6 +11,18 @@ Para cada `MotivoRescisao`, deve existir pelo menos um teste de `calcularRescisa
 - **Pedido de demissão, sem cumprir aviso prévio**: verificar que o desconto de aviso não cumprido é aplicado corretamente e que não há multa de FGTS nem direito a seguro-desemprego.
 - **Justa causa**: sem aviso prévio, sem multa FGTS, sem saque de FGTS, sem 13º proporcional (regra a confirmar com Fabio — há entendimento de que 13º proporcional não é devido em justa causa; registrar fonte antes de implementar).
 - **Acordo art. 484-A**: aviso pela metade quando indenizado, multa FGTS 20%, saque de 80% do FGTS, sem seguro-desemprego.
+- **Rescisão antecipada de contrato a termo** (salário R$ 4.500, término previsto 91 dias após o desligamento):
+  - Pelo empregador: `indenizacaoArt479 = 4.500 ÷ 30 × 91 ÷ 2 = R$ 6.825,00`, sem aviso, fora das bases de INSS/IRRF/FGTS.
+  - Pelo empregado: `indenizacaoArt480` = teto limitado a um mês de remuneração (R$ 4.500,00), como desconto.
+  - Com cláusula assecuratória: indenização zero e alerta bloqueante.
+  - Sem data de término, ou com término anterior ao desligamento: entrada rejeitada.
+- **Rescisão antecipada com cláusula assecuratória**: indenização zero; empregador paga aviso e multa de 40% (como dispensa sem justa causa); empregado tem aviso não cumprido descontado e multa zero (como pedido de demissão).
+- **Culpa recíproca**: aviso, 13º e férias proporcionais correspondem à metade do cálculo integral; multa FGTS 20%; alerta de entendimento controverso sobre as férias.
+- **Força maior**: sem aviso, multa FGTS 20%, 13º e férias integrais.
+- **Falecimento**: sem aviso, sem multa; 13º e férias integrais.
+- **Aposentadoria voluntária**: como pedido de demissão, sem multa.
+- **PDV**: incentivo somado aos proventos sem alterar bases de INSS/IRRF/FGTS; multa e aviso conforme o plano; entrada rejeitada sem os dados do plano.
+- **DSR automático** (R$ 500 de horas extras + R$ 500 de comissões, 25 dias úteis, 5 descansos): DSR = R$ 200,00, que substitui o DSR digitado e integra a média; insalubridade fica fora da base.
 - **Rescisão indireta**: mesmo tratamento de verbas que dispensa sem justa causa (multa 40%, saque integral, direito a seguro-desemprego).
 
 ## 2. Casos de borda de data (regressão do bug de aproximação de 30 dias)

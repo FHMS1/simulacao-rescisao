@@ -56,6 +56,8 @@ export interface ProventosDetalhados {
   decimoTerceiroProporcional: number;
   abonoPecuniario: number;
   mediasIntegradas: number;
+  indenizacaoArt479: number; // rescisão antecipada pelo empregador — contrato a termo
+  incentivoPDV: number; // programa de demissão voluntária — indenizatório
   totalProventos: number;
 }
 
@@ -68,6 +70,7 @@ export interface DescontosDetalhados {
   adiantamentoDecimoTerceiro: number;
   descontoAbonoPecuniario: number;
   pensaoAlimenticia: number;
+  indenizacaoArt480: number; // rescisão antecipada pelo empregado — teto estimado
   outrosDescontos: number;
   totalDescontos: number;
 }
