@@ -173,10 +173,14 @@
 .formulario fieldset {
   border: 0;
   border-bottom: 1px solid var(--color-border);
-  padding: var(--space-md);
+  padding: 0 var(--space-md) var(--space-md);
   margin: 0;
 }
 
+/* A <legend> é desenhada no topo do fieldset, por cima do padding-top — por
+   isso o respiro de cima mora na própria legenda. Com padding-top no fieldset,
+   a legenda encostava na linha do bloco anterior e o vão até os campos
+   dobrava. */
 .formulario legend,
 .bloco-opcional summary {
   display: flex;
@@ -186,6 +190,10 @@
   font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: 0.01em;
+}
+
+.formulario legend {
+  padding-top: var(--space-md);
 }
 
 /* Marcador de etapa: numeração é hierarquia visual, não conteúdo — o leitor
